@@ -1,0 +1,25 @@
+# Environment
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+.venv/
+
+# Generated files
+chunks.json
+edges.json
+
+# Qdrant
+.qdrant/
+
+# Indexed repositories
+flask_repo/
+werkzeug_repo/
+
+# IDE
+.vscode/
+.idea/

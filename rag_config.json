@@ -1,0 +1,144 @@
+{
+   "repos": [
+      "flask_repo",
+      "werkzeug_repo"
+    ],
+
+  "noise_files": [
+    "wrappers.py",
+    "helpers.py"
+  ],
+
+  "noise_dirs": [
+    "examples",
+    "tutorial"
+  ],
+
+  "boost_dirs": ["src", "lib", "core", "app"],
+
+  "penalize_dirs": ["tests", "test", "docs", "benchmarks"],
+
+  "rerank_score_cutoff": -3.0,
+
+  "skip_dirs": [
+    ".git", "__pycache__", ".venv", "venv",
+    "node_modules", ".pytest_cache", "build", "dist"
+  ],
+
+  "routing_categories": {
+    "session": {
+      "boost_files": ["sessions.py"],
+      "boost_names": [
+        "SessionInterface",
+        "SecureCookieSession",
+        "SecureCookieSessionInterface",
+        "open_session",
+        "save_session",
+        "get_signing_serializer"
+      ],
+      "filter_files": ["testing.py"]
+    },
+
+    "blueprint": {
+      "boost_files": ["blueprints.py"],
+      "boost_names": [
+        "Blueprint",
+        "BlueprintSetupState",
+        "register",
+        "register_blueprint",
+        "_merge_blueprint_funcs"
+      ],
+      "filter_files": []
+    },
+
+    "dispatch": {
+      "boost_files": ["app.py", "map.py"],
+      "boost_names": [
+        "wsgi_app",
+        "full_dispatch_request",
+        "dispatch_request",
+        "match"
+      ],
+      "filter_files": []
+    },
+
+    "request": {
+      "boost_files": ["app.py", "map.py"],
+      "boost_names": [
+        "wsgi_app",
+        "full_dispatch_request",
+        "dispatch_request",
+        "match"
+      ],
+      "filter_files": []
+    },
+
+    "error": {
+      "boost_files": ["scaffold.py"],
+      "boost_names": [
+        "errorhandler",
+        "register_error_handler",
+        "handle_user_exception",
+        "handle_http_exception"
+      ],
+      "filter_files": []
+    },
+
+    "template": {
+      "boost_files": ["templating.py"],
+      "boost_names": [
+        "render_template",
+        "render_template_string",
+        "_render",
+        "stream_template"
+      ],
+      "filter_files": []
+    },
+
+    "cli": {
+      "boost_files": ["cli.py"],
+      "boost_names": [
+        "FlaskGroup",
+        "AppGroup",
+        "ScriptInfo",
+        "run_command",
+        "shell_command"
+      ],
+      "filter_files": []
+    },
+
+    "route": {
+      "boost_files": ["scaffold.py", "app.py"],
+      "boost_names": [
+        "route",
+        "add_url_rule",
+        "decorator",
+        "url_for"
+      ],
+      "filter_files": []
+    },
+
+    "middleware": {
+      "boost_files": ["app.py"],
+      "boost_names": [
+        "wsgi_app",
+        "before_request",
+        "after_request",
+        "teardown_request"
+      ],
+      "filter_files": []
+    },
+
+    "context": {
+      "boost_files": ["ctx.py", "globals.py"],
+      "boost_names": [
+        "push",
+        "pop",
+        "AppContext",
+        "RequestContext",
+        "app_ctx_err_msg"
+      ],
+      "filter_files": []
+    }
+  }
+}
