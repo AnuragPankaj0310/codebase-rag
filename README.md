@@ -1,56 +1,55 @@
 # Codebase RAG
 
-Repository-aware Retrieval-Augmented Generation (RAG) system for understanding large codebases.
+Repository-aware Retrieval-Augmented Generation system for codebase understanding.
 
-## Features
+## Current Status
 
-* AST-based code chunking
-* Call graph generation
-* Semantic search with embeddings
-* Cross-encoder reranking
-* Qdrant vector storage
-* Multi-repository indexing
-* Graph-aware code retrieval
-* LLM-powered repository Q&A
+### Indexed Repositories
 
-## Architecture
+* Flask
+* Werkzeug
 
-```text
-Repository
-    ↓
-Chunker
-    ↓
-Call Graph
-    ↓
-Embeddings
-    ↓
-Qdrant
-    ↓
-Retrieval
-    ↓
-Reranker
-    ↓
+### Current Graph Statistics
+
+* Chunks: ~4,056
+* Edges: ~15,670
+* Calls: ~12,791
+* Resolved Calls: ~3,806
+
+### Stack
+
+* Python
+* Qdrant
+* Sentence Transformers
+* Cross Encoder Reranking
+* AST-based Code Parsing
+
+## Pipeline
+
+Repository Source Code
+↓
+AST Chunking
+↓
+Symbol Extraction
+↓
+Call Graph Construction
+↓
+Embedding Generation
+↓
+Qdrant Storage
+↓
+Hybrid Retrieval
+↓
+Cross Encoder Reranking
+↓
 LLM Answer Generation
-```
 
 ## Setup
 
-### Clone
-
-```bash
-git clone https://github.com/AnuragPankaj0310/codebase-rag.git
-cd codebase-rag
-```
-
-### Create Virtual Environment
+### Create Environment
 
 ```bash
 python -m venv venv
-```
-
-Windows:
-
-```bash
 venv\Scripts\activate
 ```
 
@@ -60,7 +59,19 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Configure Repositories
+### Start Qdrant
+
+```bash
+docker run -p 6333:6333 qdrant/qdrant
+```
+
+## Index Repositories
+
+Configure repositories in:
+
+```text
+rag_config.json
+```
 
 Example:
 
@@ -73,32 +84,19 @@ Example:
 }
 ```
 
-Clone repositories:
-
-```bash
-git clone https://github.com/pallets/flask.git flask_repo
-git clone https://github.com/pallets/werkzeug.git werkzeug_repo
-```
-
-## Start Qdrant
-
-```bash
-docker run -p 6333:6333 qdrant/qdrant
-```
-
-## Build Graph
+Build graph:
 
 ```bash
 python chunker.py
 ```
 
-## Generate Embeddings
+Generate embeddings:
 
 ```bash
 python ingest.py
 ```
 
-## Query Repository
+## Run Agent
 
 ```bash
 python agent.py
@@ -109,31 +107,23 @@ Example questions:
 * How are blueprints registered?
 * How does request dispatch work?
 * How is session handling implemented?
-* How does Flask create an application?
+* How does template rendering work?
 
-## Project Structure
+## Current Limitations
 
-```text
-agent.py
-chunker.py
-storage.py
-reranker.py
-search.py
-hybrid_search.py
-graph_traversal.py
-ingest.py
-rag_config.json
-```
+* Symbol resolution still misses many indirect calls.
+* Retrieval occasionally surfaces tests instead of implementation code.
+* Multi-hop graph traversal needs improvement.
+* Repository-specific ranking is not implemented yet.
 
-## Roadmap
+## Next Priorities
 
-* Better symbol resolution
-* Improved hybrid retrieval
-* Repository-specific ranking
-* Multi-hop graph traversal
-* Benchmark suite
-* UI frontend
+1. Improve retrieval quality.
+2. Improve symbol resolution.
+3. Better graph traversal.
+4. Strong benchmark suite.
+5. Multi-repository support beyond Flask/Werkzeug.
 
-## License
+## Version
 
-MIT
+Current checkpoint: v0.1
