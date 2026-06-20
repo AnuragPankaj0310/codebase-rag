@@ -1,4 +1,5 @@
 from langgraph.graph import StateGraph, END
+from agent import build_graph_context
 from reranker import hybrid_search_with_rerank
 from typing import TypedDict, List
 
@@ -64,6 +65,31 @@ def retriever_node(state):
     }
 
 
+def graph_agent_node(state):
+
+    results = state["retrieval_results"]
+
+    if not results:
+        return {
+            **state,
+            "graph_context": "",
+            "confidence": 0.0
+        }
+
+    context = build_graph_context(results)
+
+    confidence = 0.8
+
+    if len(context.strip()) < 100:
+        confidence = 0.3
+
+    return {
+        **state,
+        "graph_context": context,
+        "confidence": confidence
+    }
+
+
 workflow = StateGraph(AgentState)
 
 workflow.add_node(
@@ -87,7 +113,17 @@ workflow.add_edge(
 
 workflow.add_edge(
     "retriever",
+    "graph_agent"
+)
+
+workflow.add_edge(
+    "graph_agent",
     END
+)
+
+workflow.add_node(
+    "graph_agent",
+    graph_agent_node
 )
 
 app = workflow.compile()
@@ -104,8 +140,10 @@ if __name__ == "__main__":
         "confidence": 0.0,
         "retry_count": 0
     })
+print(result["query_type"])
+print()
 
-    print(result)
-    print(result["query_type"])
-    print()
-    print("Retrieved:", len(result["retrieval_results"]))
+print("Retrieved:", len(result["retrieval_results"]))
+print()
+
+print(result["graph_context"][:1000])
