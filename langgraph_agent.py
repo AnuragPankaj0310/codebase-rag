@@ -1,3 +1,4 @@
+from langgraph.graph import StateGraph, END
 from typing import TypedDict, List
 
 
@@ -44,26 +45,35 @@ def planner_node(state):
     }
 
 
+workflow = StateGraph(AgentState)
+
+workflow.add_node(
+    "planner",
+    planner_node
+)
+
+workflow.set_entry_point(
+    "planner"
+)
+
+workflow.add_edge(
+    "planner",
+    END
+)
+
+app = workflow.compile()
+
+
 if __name__ == "__main__":
 
-    tests = [
-        "How are blueprints registered?",
-        "What calls dispatch_request?",
-        "Where is session saving implemented?",
-        "What breaks if I modify register_blueprint?"
-    ]
+    result = app.invoke({
+        "question": "How are blueprints registered?",
+        "query_type": "",
+        "retrieval_results": [],
+        "graph_context": "",
+        "answer": "",
+        "confidence": 0.0,
+        "retry_count": 0
+    })
 
-    for t in tests:
-        result = planner_node({
-            "question": t,
-            "query_type": "",
-            "retrieval_results": [],
-            "graph_context": "",
-            "answer": "",
-            "confidence": 0.0,
-            "retry_count": 0
-        })
-
-        print(t)
-        print("->", result["query_type"])
-        print()
+    print(result)
