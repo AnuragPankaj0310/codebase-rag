@@ -1,4 +1,5 @@
 from langgraph.graph import StateGraph, END
+from reranker import hybrid_search_with_rerank
 from typing import TypedDict, List
 
 
@@ -45,6 +46,24 @@ def planner_node(state):
     }
 
 
+def retriever_node(state):
+
+    top_k = 5
+
+    if state["query_type"] == "flow":
+        top_k = 10
+
+    results = hybrid_search_with_rerank(
+        state["question"],
+        top_k=top_k
+    )
+
+    return {
+        **state,
+        "retrieval_results": results
+    }
+
+
 workflow = StateGraph(AgentState)
 
 workflow.add_node(
@@ -56,8 +75,18 @@ workflow.set_entry_point(
     "planner"
 )
 
+workflow.add_node(
+    "retriever",
+    retriever_node
+)
+
 workflow.add_edge(
     "planner",
+    "retriever"
+)
+
+workflow.add_edge(
+    "retriever",
     END
 )
 
@@ -77,3 +106,6 @@ if __name__ == "__main__":
     })
 
     print(result)
+    print(result["query_type"])
+    print()
+    print("Retrieved:", len(result["retrieval_results"]))
