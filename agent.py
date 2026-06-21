@@ -4,22 +4,17 @@ agent.py — RAG query interface over a parsed code repository.
 Features:
 - Hybrid retrieval (semantic + BM25) with CrossEncoder reranking
 - Graph-enriched context (callers, callees, related code)
-- Per-repo config via rag_config.json (noise files/dirs loaded from config)
+- Per-repo config via rag_config.json
 - Allowed-list hallucination guard injected into every prompt
 """
 
 from dotenv import load_dotenv
-
 load_dotenv()
 
 from groq import Groq
 import os
 import json
-from graph_traversal import (
-    load_graph,
-    build_graph_maps,
-    analyze_impact_by_id
-)
+from graph_traversal import load_graph, build_graph_maps, analyze_impact_by_id
 from reranker import hybrid_search_with_rerank
 
 # =====================================
@@ -37,7 +32,6 @@ def load_config(path="rag_config.json"):
     }
 
 CONFIG = load_config()
-
 NOISE_FILES = CONFIG.get("noise_files", [])
 NOISE_DIRS  = CONFIG.get("noise_dirs", ["examples", "tutorial"])
 RERANK_SCORE_CUTOFF = float(CONFIG.get("rerank_score_cutoff", -3.0))
@@ -53,13 +47,11 @@ _chunks, _edges = load_graph()
 _chunk_map, _name_to_ids, _forward, _reverse = build_graph_maps(_chunks, _edges)
 print(f"Graph loaded: {len(_chunks)} chunks, {len(_edges)} edges")
 
-
 # =====================================
 # HELPERS
 # =====================================
 
 def is_noise(file_path):
-    """Return True if this file should be excluded from retrieval results."""
     fp = file_path.replace("\\", "/")
     if any(n in fp for n in NOISE_FILES):
         return True
@@ -70,9 +62,56 @@ def is_noise(file_path):
 
 
 def is_test(file_path):
-    """Return True for test files — excluded from answers but kept in graph."""
     fp = file_path.replace("\\", "/")
     return "/tests/" in fp or "/test/" in fp or "test_" in os.path.basename(fp)
+
+
+# =====================================
+# ALLOWED LIST BUILDER
+# =====================================
+
+def build_allowed_lists(results):
+    allowed_functions = set()
+    allowed_files = set()
+    
+    # Walk forward and reverse edges up to depth 2
+    to_process = list(results)
+    seen_ids = set()
+    
+    for depth in range(2):  # depth 0 = direct results, depth 1 = neighbors
+        next_layer = []
+        for r in to_process:
+            rid = r.get("id", r.get("chunk_id", ""))
+            if rid in seen_ids:
+                continue
+            seen_ids.add(rid)
+            
+            allowed_functions.add(r["name"])
+            allowed_files.add(r["file_path"])
+            
+            for edge in _forward.get(rid, []):
+                if edge.get("type") != "calls":
+                    continue
+                c = _chunk_map.get(edge["target"])
+                if c and not is_test(c["file_path"]):
+                    allowed_functions.add(c["name"])
+                    allowed_files.add(c["file_path"])
+                    next_layer.append(c)
+            
+            for edge in _reverse.get(rid, []):
+                if edge.get("type") != "calls":
+                    continue
+                c = _chunk_map.get(edge["source"])
+                if c and not is_test(c["file_path"]):
+                    allowed_functions.add(c["name"])
+                    allowed_files.add(c["file_path"])
+                    next_layer.append(c)
+        
+        to_process = next_layer
+    
+    fn_list = "\n".join(f"   - {x}" for x in sorted(allowed_functions))
+    file_list = "\n".join(f"   - {x}" for x in sorted(allowed_files))
+    return fn_list, file_list
 
 
 # =====================================
@@ -99,9 +138,9 @@ def build_graph_context(results):
 
         impact = analyze_impact_by_id(chunk_id, _chunks, _forward, _reverse)
 
-        related_chunks = []
-        filtered_callees = []
-        filtered_callers = []
+        related_chunks    = []
+        filtered_callees  = []
+        filtered_callers  = []
         MAX_RELATED = 2
 
         if impact:
@@ -137,8 +176,8 @@ def build_graph_context(results):
                 if len(filtered_callers) >= MAX_RELATED:
                     break
 
-            callers = filtered_callers
-            callees = filtered_callees
+            callers  = filtered_callers
+            callees  = filtered_callees
 
             relationships = []
             if callers:
@@ -181,88 +220,72 @@ def build_graph_context(results):
 
 
 # =====================================
-# MAIN QUERY
+# GENERATOR
 # =====================================
 
-def ask_repo(question):
+def generate_from_context(question, context, fn_list, file_list):
 
-    # Step 1: retrieve + rerank
-    results = hybrid_search_with_rerank(question, top_k=30)
+    is_impact = "IMPACT ANALYSIS" in context
 
-    # Step 2: config-driven routing (no more hardcoded keywords)
-    question_lower = question.lower()
-    routing = CONFIG.get("routing_categories", {})
+    if is_impact:
+        extra = """
+Answer as impact analysis.
 
-    boost_files = []
-    boost_names = []
-    filter_files = []
+Explain:
+1. What depends on the target function.
+2. What would break if it changes.
+3. Direct callers.
+4. Direct callees.
+"""
+        answer_format = """
+IMPACT ANALYSIS
 
-    for keyword, category in routing.items():
-        if keyword in question_lower:
-            boost_files.extend(category.get("boost_files", []))
-            boost_names.extend(category.get("boost_names", []))
-            filter_files.extend(category.get("filter_files", []))
+DIRECT CALLERS
+[Who depends on the target]
 
-    # Apply boosts
-    for r in results:
-        if any(f in r["file_path"] for f in boost_files):
-            r["final_score"] = r.get("final_score", 0) + 2.0
-        if r["name"] in boost_names:
-            r["final_score"] = r.get("final_score", 0) + 4.0
+DIRECT CALLEES
+[What the target calls]
 
-    results.sort(key=lambda x: x.get("final_score", 0), reverse=True)
+BREAKAGE RISK
+[What would be affected if modified]
 
-    # Apply filters
-    if filter_files:
-        results = [
-            r for r in results
-            if not any(f in r["file_path"].lower() for f in filter_files)
-        ]
+AFFECTED FILES
+[Files and components impacted]
+"""
+        rules = """
+1. Focus on dependency impact.
+2. Identify direct callers and direct callees.
+3. If no callers are found in the context, say: 
+   "register_blueprint is called by application code outside this repository."
+   Do NOT say "cannot be inferred" or "not explicitly mentioned."
+4. Explain what would break if the target changes.
+5. Mention exact file paths and line numbers.
+6. Use RELATED CODE to justify impact claims.
+"""
+    else:
+        extra = ""
+        answer_format = """
+FLOW SUMMARY
+[One paragraph explaining the complete execution flow from entry to exit]
 
-    # Step 3: filter noise, tests, low-confidence (rest stays the same)
-    results = [
-        r for r in results
-        if r.get("final_score", 0) > RERANK_SCORE_CUTOFF
-        and not is_noise(r["file_path"])
-        and not is_test(r["file_path"])
-    ][:5]
-    
-    # ... rest of function unchanged
+STEP-BY-STEP TRACE
+[Numbered steps showing exact function calls and what each does]
 
-    if not results:
-        return "No relevant code found for that question."
-                
+FILES INVOLVED
+[List of files and their roles]
 
-    # Step 4: build allowed-list for hallucination guard
-    allowed_functions = set()
-    allowed_files = set()
+KEY RELATIONSHIPS
+[What calls what and why it matters]
+"""
+        rules = """
+1. Explain the FLOW between functions, not just what each function does.
+2. Use the Execution Flow, Relationships, and RELATED CODE sections to trace the flow.
+3. Format your answer as an actual flow: A() calls B() which calls C().
+4. Mention exact file paths and line numbers from the context.
+5. When a RELATED CODE section shows actual code, use it to explain what that function does.
+6. Do NOT just summarize each source independently — connect them.
+"""
 
-    for r in results:
-        allowed_functions.add(r["name"])
-        allowed_files.add(r["file_path"])
-        # Include direct graph neighbours that will appear in RELATED CODE
-        for edge in _forward.get(r["id"], []):
-            if edge.get("type") != "calls":   # ← add this check
-                continue
-            c = _chunk_map.get(edge["target"])
-            if c and not is_noise(c["file_path"]) and not is_test(c["file_path"]):
-                allowed_functions.add(c["name"])
-                allowed_files.add(c["file_path"])
-        for edge in _reverse.get(r["id"], []):
-            if edge.get("type") != "calls":   # ← add this check
-                continue
-            c = _chunk_map.get(edge["source"])
-            if c and not is_noise(c["file_path"]) and not is_test(c["file_path"]):
-                allowed_functions.add(c["name"])
-                allowed_files.add(c["file_path"])
-
-    fn_list   = "\n".join(f"   - {x}" for x in sorted(allowed_functions))
-    file_list = "\n".join(f"   - {x}" for x in sorted(allowed_files))
-
-    # Step 5: build graph-enriched context
-    context = build_graph_context(results)
-
-    # Step 6: prompt
     prompt = f"""You are a senior software engineer analyzing a Python codebase.
 You have been given code chunks AND their call graph relationships.
 
@@ -276,13 +299,8 @@ CRITICAL RULES:
    Before writing each sentence, verify every function/file name is in the lists above.
    Any name not in the lists must NOT appear in your answer. This is a hard rule.
 
-1. Explain the FLOW between functions, not just what each function does.
-2. Use the Execution Flow, Relationships, and RELATED CODE sections to trace the flow.
-3. Format your answer as an actual flow: A() calls B() which calls C().
-4. Mention exact file paths and line numbers from the context.
-5. When a RELATED CODE section shows actual code, use it to explain what that function does.
-6. Do NOT just summarize each source independently — connect them.
-
+{rules}
+{extra}
 Question: {question}
 
 Repository Context (with call graph relationships):
@@ -290,17 +308,7 @@ Repository Context (with call graph relationships):
 
 Answer format:
 
-FLOW SUMMARY
-[One paragraph explaining the complete execution flow from entry to exit]
-
-STEP-BY-STEP TRACE
-[Numbered steps showing exact function calls and what each does]
-
-FILES INVOLVED
-[List of files and their roles]
-
-KEY RELATIONSHIPS
-[What calls what and why it matters]
+{answer_format}
 """
 
     response = client.chat.completions.create(
@@ -310,6 +318,64 @@ KEY RELATIONSHIPS
     )
 
     return response.choices[0].message.content
+
+
+# =====================================
+# MAIN QUERY
+# =====================================
+
+def ask_repo(question):
+
+    # Step 1: retrieve + rerank
+    results = hybrid_search_with_rerank(question, top_k=30)
+
+    # Step 2: config-driven routing
+    question_lower = question.lower()
+    routing = CONFIG.get("routing_categories", {})
+
+    boost_files  = []
+    boost_names  = []
+    filter_files = []
+
+    for keyword, category in routing.items():
+        if keyword in question_lower:
+            boost_files.extend(category.get("boost_files", []))
+            boost_names.extend(category.get("boost_names", []))
+            filter_files.extend(category.get("filter_files", []))
+
+    for r in results:
+        if any(f in r["file_path"] for f in boost_files):
+            r["final_score"] = r.get("final_score", 0) + 2.0
+        if r["name"] in boost_names:
+            r["final_score"] = r.get("final_score", 0) + 4.0
+
+    results.sort(key=lambda x: x.get("final_score", 0), reverse=True)
+
+    if filter_files:
+        results = [
+            r for r in results
+            if not any(f in r["file_path"].lower() for f in filter_files)
+        ]
+
+    # Step 3: filter noise, tests, low-confidence
+    results = [
+        r for r in results
+        if r.get("final_score", 0) > RERANK_SCORE_CUTOFF
+        and not is_noise(r["file_path"])
+        and not is_test(r["file_path"])
+    ][:5]
+
+    if not results:
+        return "No relevant code found for that question."
+
+    # Step 4: build allowed-list (results + graph neighbors)
+    fn_list, file_list = build_allowed_lists(results)
+
+    # Step 5: build graph-enriched context
+    context = build_graph_context(results)
+
+    # Step 6: generate
+    return generate_from_context(question, context, fn_list, file_list)
 
 
 # =====================================
