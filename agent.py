@@ -93,7 +93,11 @@ def build_allowed_lists(results):
                 if edge.get("type") != "calls":
                     continue
                 c = _chunk_map.get(edge["target"])
-                if c and not is_test(c["file_path"]):
+                if not c:
+                    continue
+                if c["name"] == "append":
+                    continue
+                if c and not is_test(c["file_path"]) and not is_noise(c["file_path"]):
                     allowed_functions.add(c["name"])
                     allowed_files.add(c["file_path"])
                     next_layer.append(c)
@@ -102,7 +106,11 @@ def build_allowed_lists(results):
                 if edge.get("type") != "calls":
                     continue
                 c = _chunk_map.get(edge["source"])
-                if c and not is_test(c["file_path"]):
+                if not c:
+                    continue
+                if c["name"] == "append":
+                    continue
+                if c and not is_test(c["file_path"]) and not is_noise(c["file_path"]):
                     allowed_functions.add(c["name"])
                     allowed_files.add(c["file_path"])
                     next_layer.append(c)
@@ -227,6 +235,26 @@ def generate_from_context(question, context, fn_list, file_list):
 
     is_impact = "IMPACT ANALYSIS" in context
 
+    is_lookup = "LOCATION LOOKUP" in context
+
+    if is_lookup:
+        answer_format = """
+    LOCATION
+    [Exact file and line number where this is implemented]
+
+    IMPLEMENTATION SUMMARY  
+    [2-3 sentences explaining what it does]
+
+    CALLED BY
+    [What calls this, if known]
+    """
+        rules = """
+    1. State the exact file and line number first.
+    2. Summarize what the function does in 2-3 sentences.
+    3. Do not produce a flow trace — this is a location lookup.
+    4. Only mention allowed functions and files.
+    """
+
     if is_impact:
         extra = """
 Answer as impact analysis.
@@ -253,14 +281,13 @@ AFFECTED FILES
 [Files and components impacted]
 """
         rules = """
-1. Focus on dependency impact.
-2. Identify direct callers and direct callees.
-3. If no callers are found in the context, say: 
-   "register_blueprint is called by application code outside this repository."
-   Do NOT say "cannot be inferred" or "not explicitly mentioned."
-4. Explain what would break if the target changes.
-5. Mention exact file paths and line numbers.
-6. Use RELATED CODE to justify impact claims.
+1. Be concise. Answer in under 300 words total.
+2. State direct callees explicitly: "register_blueprint calls register()."
+3. If no internal callers exist, say exactly: 
+   "No internal callers found. This function is called by application code."
+4. Only mention functions and files from the ALLOWED list above.
+5. Do not repeat any sentence. Each point is stated once only.
+6. Stop after AFFECTED FILES. Do not add any additional text.
 """
     else:
         extra = ""
@@ -314,7 +341,8 @@ Answer format:
     response = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[{"role": "user", "content": prompt}],
-        temperature=0.1
+        temperature=0.1,
+        max_tokens=1024
     )
 
     return response.choices[0].message.content

@@ -1,5 +1,5 @@
 from langgraph.graph import StateGraph, END
-from agent import build_graph_context
+from agent import build_graph_context, is_noise, is_test
 from reranker import hybrid_search_with_rerank
 from typing import TypedDict, List
 from agent import generate_from_context
@@ -50,42 +50,26 @@ def planner_node(state):
         "query_type": query_type
     }
 
-
 def retriever_node(state):
-
-    top_k = 5
-
-    if state["query_type"] == "flow":
-        top_k = 10
-
-    results = hybrid_search_with_rerank(
-        state["question"],
-        top_k=top_k
-    )
-
-    return {
-        **state,
-        "retrieval_results": results
-    }
+    top_k = 5 if state["query_type"] == "lookup" else 10
+    results = hybrid_search_with_rerank(state["question"], top_k=top_k)
+    
+    # Filter before passing downstream — same as ask_repo does
+    results = [
+        r for r in results
+        if not is_noise(r["file_path"])
+        and not is_test(r["file_path"])
+    ]
+    
+    return {**state, "retrieval_results": results,
+            "retry_count": state["retry_count"] + 1}
 
 
 def graph_agent_node(state):
 
     results = state["retrieval_results"]
-    allowed_functions = set()
-    allowed_files = set()
-
-    for r in results:
-        allowed_functions.add(r["name"])
-        allowed_files.add(r["file_path"])
-
-    fn_list = "\n".join(
-        f"   - {x}" for x in sorted(allowed_functions)
-    )
-
-    file_list = "\n".join(
-        f"   - {x}" for x in sorted(allowed_files)
-    )
+    
+    fn_list, file_list = build_allowed_lists(results[:3])
 
     if not results:
         return {
@@ -98,10 +82,15 @@ def graph_agent_node(state):
 
     if state["query_type"] == "lookup":
 
-        context = ""
+        context = "LOCATION LOOKUP\n\n"
 
         for r in results[:5]:
+
+            if is_test(r["file_path"]) or is_noise(r["file_path"]):
+                continue
+
             context += f"\n\nSOURCE: {r['name']}\n"
+            context += f"File: {r['file_path']}\n"
             context += r["content"][:1000]
 
     elif state["query_type"] == "impact":
@@ -132,20 +121,7 @@ def impact_node(state):
 
     results = state["retrieval_results"]
 
-    allowed_functions = set()
-    allowed_files = set()
-
-    for r in results:
-        allowed_functions.add(r["name"])
-        allowed_files.add(r["file_path"])
-
-    fn_list = "\n".join(
-        f"   - {x}" for x in sorted(allowed_functions)
-    )
-
-    file_list = "\n".join(
-        f"   - {x}" for x in sorted(allowed_files)
-    )
+    fn_list, file_list = build_allowed_lists(results[:3])
 
     context = "IMPACT ANALYSIS\n\n"
 
@@ -272,7 +248,7 @@ app = workflow.compile()
 if __name__ == "__main__":
 
     result = app.invoke({
-        "question": "What breaks if I modify register_blueprint?",
+        "question": "How does request dispatching work?",
         "query_type": "",
         "retrieval_results": [],
         "graph_context": "",
