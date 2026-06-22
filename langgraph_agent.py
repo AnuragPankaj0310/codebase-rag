@@ -165,6 +165,12 @@ def route_after_retrieval(state):
 
 def generator_node(state):
 
+    print("\nALLOWED FILES:")
+    print(state["file_list"])
+
+    print("\nALLOWED FUNCTIONS:")
+    print(state["fn_list"])
+
     answer = generate_from_context(
         state["question"],
         state["graph_context"],
@@ -249,7 +255,7 @@ if __name__ == "__main__":
 
     result = app.invoke({
         "question": "How does request dispatching work?",
-        "query_type": "",
+        "query_type": "lookup",
         "retrieval_results": [],
         "graph_context": "",
         "answer": "",

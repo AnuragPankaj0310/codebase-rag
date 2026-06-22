@@ -78,7 +78,7 @@ def build_allowed_lists(results):
     to_process = list(results)
     seen_ids = set()
     
-    for depth in range(2):  # depth 0 = direct results, depth 1 = neighbors
+    for depth in range(1):  # depth 0 = direct results, depth 1 = neighbors
         next_layer = []
         for r in to_process:
             rid = r.get("id", r.get("chunk_id", ""))
@@ -163,6 +163,8 @@ def build_graph_context(results):
                     continue
                 if is_noise(c["file_path"]) or is_test(c["file_path"]):
                     continue
+                print("\nGRAPH CALLEE:")
+                print(c["name"], c["file_path"])
                 related_chunks.append(c)
                 filtered_callees.append(callee)
                 if len(filtered_callees) >= MAX_RELATED:
@@ -179,6 +181,8 @@ def build_graph_context(results):
                     continue
                 if is_noise(c["file_path"]) or is_test(c["file_path"]):
                     continue
+                print("\nGRAPH CALLER:")
+                print(c["name"], c["file_path"])
                 related_chunks.append(c)
                 filtered_callers.append(caller)
                 if len(filtered_callers) >= MAX_RELATED:
@@ -317,11 +321,19 @@ KEY RELATIONSHIPS
 You have been given code chunks AND their call graph relationships.
 
 CRITICAL RULES:
-0. ALLOWED FUNCTIONS (you may ONLY mention these — nothing else):
+
+0. ALLOWED FUNCTIONS:
 {fn_list}
 
-   ALLOWED FILES (you may ONLY mention these):
+ALLOWED FILES:
 {file_list}
+
+1. Every function name must appear in ALLOWED FUNCTIONS.
+2. Every file path must appear in ALLOWED FILES.
+3. If a function or file is not in the allowed lists, do not mention it.
+4. Do not use outside knowledge about Flask or Werkzeug.
+5. Use only names that appear in Repository Context.
+6. Never infer additional files or functions.
 
    Before writing each sentence, verify every function/file name is in the lists above.
    Any name not in the lists must NOT appear in your answer. This is a hard rule.
