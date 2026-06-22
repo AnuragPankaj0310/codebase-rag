@@ -1,0 +1,304 @@
+(venv) PS C:\Users\evilk\OneDrive\Desktop\codebase-rag> python langgraph_agent.py          
+Loading embedding model...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|█| 199/199 [00:00<00:00, 4833.01it/s]
+✓ Qdrant connected
+Loading reranker model...
+Loading weights: 100%|█| 105/105 [00:00<00:00, 8811.74it/s]
+Loading graph...
+Graph loaded: 4056 chunks, 15670 edges
+
+QUERY TYPE: flow
+
+FLOW SUMMARY
+The registration of blueprints in the Flask application involves a series of function calls that ultimately lead to the creation of a BlueprintSetupState object, which is then used to register the blueprint with the application. The flow begins with the register_blueprint function, which calls the register function, passing the application and options as arguments. The register function then calls the make_setup_state function to create a BlueprintSetupState object, and the _merge_blueprint_funcs function to merge the blueprint's functions with the application's. The BlueprintSetupState object is then used to register the blueprint's callbacks with the application.
+
+STEP-BY-STEP TRACE
+1. The register_blueprint function (flask_repo\src\flask\sansio\blueprints.py:256-271) is called to register a blueprint with the application.
+2. The register_blueprint function calls the register function (flask_repo\src\flask\sansio\blueprints.py:273-377), passing the application and options as arguments.
+3. The register function calls the make_setup_state function (flask_repo\src\flask\sansio\blueprints.py:246-253) to create a BlueprintSetupState object.
+4. The make_setup_state function returns a BlueprintSetupState object, which is then used to register the blueprint's callbacks with the application.
+5. The register function also calls the _merge_blueprint_funcs function (flask_repo\src\flask\sansio\blueprints.py:379-410) to merge the blueprint's functions with the application's.
+6. The _merge_blueprint_funcs function extends the application's functions with the blueprint's functions.
+7. The BlueprintSetupState object is used to register the blueprint's callbacks with the application, by calling the record function (not shown in the provided code).
+
+FILES INVOLVED
+- flask_repo\src\flask\sansio\blueprints.py: This file contains the register_blueprint, register, make_setup_state, and _merge_blueprint_funcs functions, which are all involved in the registration of blueprints.
+- flask_repo\src\flask\sansio\scaffold.py: This file contains the _endpoint_from_view_func function, which is called by the BlueprintSetupState object to get the endpoint for a given view function.
+- flask_repo\src\flask\sansio\app.py: This file contains the add_template_filter function, which is called by the Blueprint class to add a template filter to the application.
+
+KEY RELATIONSHIPS
+- The register_blueprint function calls the register function to register a blueprint with the application.
+- The register function calls the make_setup_state function to create a BlueprintSetupState object, and the _merge_blueprint_funcs function to merge the blueprint's functions with the application's.
+- The BlueprintSetupState object is used to register the blueprint's callbacks with the application, by calling the record function.
+- The make_setup_state function returns a BlueprintSetupState object, which is then used to register the blueprint's callbacks with the application.
+- The _merge_blueprint_funcs function extends the application's functions with the blueprint's functions.
+(venv) PS C:\Users\evilk\OneDrive\Desktop\codebase-rag> python langgraph_agent.py
+Loading embedding model...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|█| 199/199 [00:00<00:00, 11688.53it/s
+✓ Qdrant connected
+Loading reranker model...
+Loading weights: 100%|█| 105/105 [00:00<00:00, 10233.81it/s
+Loading graph...
+Graph loaded: 4056 chunks, 15670 edges
+
+QUERY TYPE: flow
+
+FLOW SUMMARY
+The request dispatch flow in Flask begins with the `full_dispatch_request` function, which is called by the `Flask` class or the `wsgi_app` function. `full_dispatch_request` then calls `dispatch_request`, which is responsible for matching the URL and returning the return value of the view or error handler. If an error occurs during this process, `dispatch_request` calls `raise_routing_exception`. The `ensure_sync` function is also called by `dispatch_request` to ensure that the view function is synchronous. The flow ultimately returns a response object, which is created using the `make_response` function.
+
+STEP-BY-STEP TRACE
+1. The `full_dispatch_request` function is called by the `Flask` class or the `wsgi_app` function, located in `flask_repo\src\flask\app.py` at lines 109 and 1566, respectively.
+2. `full_dispatch_request` calls `dispatch_request`, located in `flask_repo\src\flask\app.py` at line 966, to match the URL and return the return value of the view or error handler.
+3. If an error occurs during this process, `dispatch_request` calls `raise_routing_exception`, located in `flask_repo\src\flask\app.py` at line 562, to intercept routing exceptions.
+4. `dispatch_request` also calls `ensure_sync`, located in `flask_repo\src\flask\app.py` at line 1065, to ensure that the view function is synchronous.
+5. The `ensure_sync` function checks if the view function is asynchronous and wraps it if necessary to ensure it runs synchronously.
+6. The `dispatch_request` function returns the return value of the view or error handler, which is then used to create a response object using the `make_response` function.
+
+FILES INVOLVED
+- `flask_repo\src\flask\app.py`: This file contains the `full_dispatch_request`, `dispatch_request`, `raise_routing_exception`, and `ensure_sync` functions, which are all involved in the request dispatch flow.
+- `flask_repo\src\flask\views.py`: This file contains an alternative implementation of the `dispatch_request` function, which is used by view classes to dispatch requests.
+
+KEY RELATIONSHIPS
+- `full_dispatch_request` calls `dispatch_request` to match the URL and return the return value of the view or error handler.
+- `dispatch_request` calls `raise_routing_exception` to intercept routing exceptions.
+- `dispatch_request` calls `ensure_sync` to ensure that the view function is synchronous.
+- The `Flask` class and the `wsgi_app` function call `full_dispatch_request` to start the request dispatch flow.
+(venv) PS C:\Users\evilk\OneDrive\Desktop\codebase-rag> python langgraph_agent.py
+Loading embedding model...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|█| 199/199 [00:00<00:00, 12080.16it/s
+✓ Qdrant connected
+Loading reranker model...
+Loading weights: 100%|█| 105/105 [00:00<00:00, 9500.22it/s]
+Loading graph...
+Graph loaded: 4056 chunks, 15670 edges
+
+QUERY TYPE: flow
+
+FLOW SUMMARY
+The error handler registration flow in Flask begins with the `errorhandler` function, which is a decorator that registers a function to handle errors by code or exception class. This decorator calls the `register_error_handler` function, which in turn calls the `_get_exc_class_and_code` function to determine the exception class and code. The registered error handlers are then stored in the `error_handler_spec` dictionary. When an HTTP exception occurs, the `handle_http_exception` function is called, which invokes the `_find_error_handler` function to find a registered error handler for the exception. If a handler is found, it is called to handle the exception.
+
+STEP-BY-STEP TRACE
+1. The `errorhandler` function is called as a decorator to register an error handler function, passing in the error code or exception class and the handler function.
+2. The `errorhandler` function calls the `register_error_handler` function, passing in the error code or exception class and the handler function.
+3. The `register_error_handler` function calls the `_get_exc_class_and_code` function to determine the exception class and code.
+4. The `_get_exc_class_and_code` function returns the exception class and code, which are then used to store the error handler function in the `error_handler_spec` dictionary.
+5. When an HTTP exception occurs, the `handle_http_exception` function is called, passing in the exception and the application context.
+6. The `handle_http_exception` function calls the `_find_error_handler` function to find a registered error handler for the exception.
+7. The `_find_error_handler` function searches for a registered error handler in the `error_handler_spec` dictionary, using the exception class and code.
+8. If a registered error handler is found, it is called to handle the exception.
+
+FILES INVOLVED
+- `flask_repo\src\flask\sansio\scaffold.py`: Contains the `errorhandler`, `register_error_handler`, and `_get_exc_class_and_code` functions.
+- `flask_repo\src\flask\app.py`: Contains the `handle_http_exception` and `_find_error_handler` functions.
+- `flask_repo\src\flask\sansio\blueprints.py`: Contains the `Blueprint` class, which uses the `errorhandler` function.
+
+KEY RELATIONSHIPS
+- The `errorhandler` function calls the `register_error_handler` function to register an error handler.
+- The `register_error_handler` function calls the `_get_exc_class_and_code` function to determine the exception class and code.
+- The `handle_http_exception` function calls the `_find_error_handler` function to find a registered error handler for an exception.
+- The `_find_error_handler` function searches for a registered error handler in the `error_handler_spec` dictionary, which is populated by the `register_error_handler` function.
+(venv) PS C:\Users\evilk\OneDrive\Desktop\codebase-rag> python langgraph_agent.py
+Loading embedding model...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|█| 199/199 [00:00<00:00, 7966.20it/s]
+✓ Qdrant connected
+Loading reranker model...
+Loading weights: 100%|█| 105/105 [00:00<00:00, 9993.92it/s]
+Loading graph...
+Graph loaded: 4056 chunks, 15670 edges
+
+QUERY TYPE: flow
+
+FLOW SUMMARY
+The execution flow for registering CLI commands begins with the `AppGroup` class in `flask_repo\src\flask\cli.py`, which changes the behavior of the `command` decorator to automatically wrap functions in `with_appcontext`. The `with_appcontext` function in `flask_repo\src\flask\cli.py` ensures that a callback is executed with the script's application context, and it calls `load_app` to load the Flask app if it's not already loaded. The `load_app` function returns the loaded app, and `with_appcontext` then calls `app_context` to create an `AppContext`. The `app_context` function in `flask_repo\src\flask\app.py` creates an `AppContext` and makes `current_app` and `g` available. The `command` function in `flask_repo\src\flask\cli.py` is used to register CLI commands, and it wraps callbacks in `with_appcontext` unless it's disabled. The `routes_command` function in `flask_repo\src\flask\cli.py` shows all registered routes with endpoints and methods, and it calls `iter_rules` in `werkzeug_repo\src\werkzeug\routing\map.py` to iterate over all rules.
+
+STEP-BY-STEP TRACE
+1. `AppGroup` in `flask_repo\src\flask\cli.py` changes the behavior of the `command` decorator to automatically wrap functions in `with_appcontext`.
+2. `with_appcontext` in `flask_repo\src\flask\cli.py` ensures that a callback is executed with the script's application context.
+3. `with_appcontext` calls `load_app` in `flask_repo\src\flask\cli.py` to load the Flask app if it's not already loaded.
+4. `load_app` returns the loaded app, and `with_appcontext` then calls `app_context` in `flask_repo\src\flask\app.py` to create an `AppContext`.
+5. `app_context` creates an `AppContext` and makes `current_app` and `g` available.
+6. `command` in `flask_repo\src\flask\cli.py` is used to register CLI commands, and it wraps callbacks in `with_appcontext` unless it's disabled.
+7. `routes_command` in `flask_repo\src\flask\cli.py` shows all registered routes with endpoints and methods, and it calls `iter_rules` in `werkzeug_repo\src\werkzeug\routing\map.py` to iterate over all rules.
+
+FILES INVOLVED
+- `flask_repo\src\flask\cli.py`: Contains `AppGroup`, `with_appcontext`, `load_app`, and `command` functions.
+- `flask_repo\src\flask\app.py`: Contains `app_context` function.
+- `werkzeug_repo\src\werkzeug\routing\map.py`: Contains `iter_rules` function.
+- `werkzeug_repo\src\werkzeug\datastructures\mixins.py`: Contains `append` function.
+
+KEY RELATIONSHIPS
+- `AppGroup` calls `with_appcontext` to ensure that callbacks are executed with the script's application context.
+- `with_appcontext` calls `load_app` to load the Flask app if it's not already loaded.
+- `with_appcontext` calls `app_context` to create an `AppContext`.
+- `command` wraps callbacks in `with_appcontext` unless it's disabled.
+- `routes_command` calls `iter_rules` to iterate over all rules.
+(venv) PS C:\Users\evilk\OneDrive\Desktop\codebase-rag> python langgraph_agent.py
+Loading embedding model...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|█| 199/199 [00:00<00:00, 10966.29it/s
+✓ Qdrant connected
+Loading reranker model...
+Loading weights: 100%|█| 105/105 [00:00<00:00, 11624.40it/s
+Loading graph...
+Graph loaded: 4056 chunks, 15670 edges
+
+QUERY TYPE: flow
+
+FLOW SUMMARY
+The template rendering process in Flask begins with either `render_template` or `render_template_string` being called from `flask_repo\src\flask\templating.py`, which then invokes `_render` to perform the actual rendering. For streaming templates, `stream_template` or `stream_template_string` is called, which in turn calls `_stream` to generate the template as a stream of strings. The `_render` and `_stream` functions update the template context using `update_template_context` and then render or stream the template, respectively. 
+
+STEP-BY-STEP TRACE
+1. `render_template` (in `flask_repo\src\flask\templating.py`) is called with a template name or list and a context, which then calls `_render` (in `flask_repo\src\flask\templating.py`) to render the template.
+2. `_render` updates the template context using `update_template_context` and then renders the template using the `render` method of the template object.
+3. Alternatively, `render_template_string` (in `flask_repo\src\flask\templating.py`) is called with a template source string and a context, which also calls `_render` to render the template.
+4. For streaming templates, `stream_template` (in `flask_repo\src\flask\templating.py`) is called with a template name or list and a context, which calls `_stream` (in `flask_repo\src\flask\templating.py`) to generate the template as a stream of strings.
+5. `_stream` updates the template context using `update_template_context` and then generates the template as a stream of strings using the `generate` method of the template object.
+6. `stream_template_string` (in `flask_repo\src\flask\templating.py`) is called with a template source string and a context, which also calls `_stream` to generate the template as a stream of strings.
+
+FILES INVOLVED
+- `flask_repo\src\flask\templating.py`: This file contains all the functions involved in the template rendering process, including `render_template`, `render_template_string`, `stream_template`, `stream_template_string`, `_render`, and `_stream`.
+
+KEY RELATIONSHIPS
+- `render_template` and `render_template_string` call `_render` to perform the actual rendering.
+- `stream_template` and `stream_template_string` call `_stream` to generate the template as a stream of strings.
+- `_render` and `_stream` both update the template context using `update_template_context` before rendering or streaming the template.
+(venv) PS C:\Users\evilk\OneDrive\Desktop\codebase-rag> python langgraph_agent.py
+Loading embedding model...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|█| 199/199 [00:00<00:00, 10793.57it/s
+✓ Qdrant connected
+Loading reranker model...
+Loading weights: 100%|█| 105/105 [00:00<00:00, 9127.31it/s]
+Loading graph...
+Graph loaded: 4056 chunks, 15670 edges
+
+QUERY TYPE: flow
+
+FLOW SUMMARY
+The creation of a Flask application involves a series of function calls that ultimately lead to the initialization of the application. The flow begins with the creation of a Flask instance, which calls the handle_url_build_error function in flask_repo\src\flask\sansio\app.py and the AppGroup class in flask_repo\src\flask\cli.py. The App class in flask_repo\src\flask\sansio\app.py is also involved, which calls the create_logger function in flask_repo\src\flask\logging.py and the auto_find_instance_path function in flask_repo\src\flask\sansio\app.py. Additionally, the from_environ function in flask_repo\src\flask\ctx.py is used to create an app context with request data from the given WSGI environ. The FlaskGroup class in flask_repo\src\flask\cli.py is a special subclass of the AppGroup class that supports loading more commands from the configured Flask app.
+
+STEP-BY-STEP TRACE
+1. Flask() is called, which creates a new instance of the Flask class in flask_repo\src\flask\app.py.
+2. The Flask instance calls the handle_url_build_error function in flask_repo\src\flask\sansio\app.py to handle any URL build errors.
+3. The Flask instance also calls the AppGroup class in flask_repo\src\flask\cli.py to create a new AppGroup instance.
+4. The App class in flask_repo\src\flask\sansio\app.py is called, which creates a new instance of the App class.
+5. The App instance calls the create_logger function in flask_repo\src\flask\logging.py to get the Flask app's logger and configure it if needed.
+6. The App instance also calls the auto_find_instance_path function in flask_repo\src\flask\sansio\app.py to try to locate the instance path if it was not provided to the constructor of the application class.
+7. The from_environ function in flask_repo\src\flask\ctx.py is called to create an app context with request data from the given WSGI environ.
+8. The FlaskGroup class in flask_repo\src\flask\cli.py is called to create a new FlaskGroup instance, which supports loading more commands from the configured Flask app.
+
+FILES INVOLVED
+- flask_repo\src\flask\app.py: This file contains the Flask class, which is the central object of the Flask application.
+- flask_repo\src\flask\sansio\app.py: This file contains the App class and the handle_url_build_error function.
+- flask_repo\src\flask\cli.py: This file contains the AppGroup and FlaskGroup classes.
+- flask_repo\src\flask\logging.py: This file contains the create_logger function.
+- flask_repo\src\flask\ctx.py: This file contains the from_environ function.
+
+KEY RELATIONSHIPS
+- Flask() calls handle_url_build_error() in flask_repo\src\flask\sansio\app.py to handle any URL build errors.
+- Flask() calls AppGroup() in flask_repo\src\flask\cli.py to create a new AppGroup instance.
+- App() calls create_logger() in flask_repo\src\flask\logging.py to get the Flask app's logger and configure it if needed.
+- App() calls auto_find_instance_path() in flask_repo\src\flask\sansio\app.py to try to locate the instance path if it was not provided to the constructor of the application class.
+- from_environ() in flask_repo\src\flask\ctx.py is called to create an app context with request data from the given WSGI environ.
+- FlaskGroup() in flask_repo\src\flask\cli.py is called to create a new FlaskGroup instance, which supports loading more commands from the configured Flask app.
+(venv) PS C:\Users\evilk\OneDrive\Desktop\codebase-rag> python langgraph_agent.py
+Loading embedding model...
+Warning: You are sending unauthenticated requests to the HFHub. Please set a HF_TOKEN to enable higher rate limits andfaster downloads.
+Loading weights: 100%|█| 199/199 [00:00<00:00, 7799.24it/s]
+✓ Qdrant connected
+Loading reranker model...
+Loading weights: 100%|█| 105/105 [00:00<00:00, 10621.31it/s
+Loading graph...
+Graph loaded: 4056 chunks, 15670 edges
+
+QUERY TYPE: flow
+
+FLOW SUMMARY
+The execution flow for adding routes begins with the `route` function in `flask_repo\src\flask\sansio\scaffold.py`, which calls `add_url_rule` in the same file. The `add_url_rule`function registers a rule for routing incoming requests andbuilding URLs. This process involves setting the endpoint name for the route, defaulting to the name of the view function if not provided. The `add_url_rule` function is also called by other parts of the codebase, such as the `Scaffold` class and the `_method_route` function. The flow ultimately leads to the registration of the route, allowing the application to handle incoming requests.
+
+STEP-BY-STEP TRACE
+1. The `route` function in `flask_repo\src\flask\sansio\scaffold.py` is called with a URL rule string and options.
+2. The `route` function calls `add_url_rule` in `flask_repo\src\flask\sansio\scaffold.py` to register the route.
+3. The `add_url_rule` function sets the endpoint name for the route, defaulting to the name of the view function if notprovided.
+4. The `add_url_rule` function is also called by the `Scaffold` class and the `_method_route` function in `flask_repo\src\flask\sansio\scaffold.py`.
+5. The `access_route` function in `werkzeug_repo\src\werkzeug\sansio\request.py` is called to get the route taken from the client to the application.
+6. The `parse_list_header` function in `werkzeug_repo\src\werkzeug\http.py` is called by `access_route` to parse the `X-Forwarded-For` header.
+
+FILES INVOLVED
+- `flask_repo\src\flask\sansio\scaffold.py`: Contains the `route`, `add_url_rule`, `Scaffold`, and `_method_route` functions.
+- `werkzeug_repo\src\werkzeug\sansio\request.py`: Contains the `access_route` function.
+- `werkzeug_repo\src\werkzeug\http.py`: Contains the `parse_list_header` function.
+
+KEY RELATIONSHIPS
+- `route` calls `add_url_rule` to register a route.
+- `add_url_rule` is called by `route`, `Scaffold`, and `_method_route` to register routes.
+- `access_route` calls `parse_list_header` to parse the `X-Forwarded-For` header.
+- The `Scaffold` class and the `_method_route` function call `route` to register routes.
+(venv) PS C:\Users\evilk\OneDrive\Desktop\codebase-rag> python langgraph_agent.py
+Loading embedding model...
+Warning: You are sending unauthenticated requests to the HFHub. Please set a HF_TOKEN to enable higher rate limits andfaster downloads.
+Loading weights: 100%|█| 199/199 [00:00<00:00, 4785.41it/s]
+✓ Qdrant connected
+Loading reranker model...
+Loading weights: 100%|█| 105/105 [00:00<00:00, 9420.97it/s]
+Loading graph...
+Graph loaded: 4056 chunks, 15670 edges
+
+QUERY TYPE: flow
+
+FLOW SUMMARY
+The execution flow for before_request handlers begins with the `before_request` function in `flask_repo\src\flask\sansio\scaffold.py`, which registers a function to run before each request. This function calls `append` in `werkzeug_repo\src\werkzeug\datastructures\mixins.py` to add the before_request handler to the list of handlers. The `preprocess_request`function in `flask_repo\src\flask\app.py` is then called, which iterates over the before_request handlers and calls them. If any handler returns a non-None value, the request handling is stopped. The `preprocess_request` function is calledby `full_dispatch_request` in `flask_repo\src\flask\app.py`, which dispatches the request and performs request pre and postprocessing.
+
+STEP-BY-STEP TRACE
+1. The `before_request` function in `flask_repo\src\flask\sansio\scaffold.py` is called to register a before_request handler.
+2. The `before_request` function calls `append` in `werkzeug_repo\src\werkzeug\datastructures\mixins.py` to add the handler to the list of handlers.
+3. The `preprocess_request` function in `flask_repo\src\flask\app.py` is called to iterate over the before_request handlers and call them.
+4. The `preprocess_request` function calls the before_request handlers, and if any handler returns a non-None value, the request handling is stopped.
+5. The `preprocess_request` function is called by `full_dispatch_request` in `flask_repo\src\flask\app.py`, which dispatches the request and performs request pre and postprocessing.
+
+FILES INVOLVED
+- `flask_repo\src\flask\sansio\scaffold.py`: Contains the `before_request` function to register before_request handlers.
+- `werkzeug_repo\src\werkzeug\datastructures\mixins.py`: Contains the `append` function to add handlers to the list of handlers.
+- `flask_repo\src\flask\app.py`: Contains the `preprocess_request` function to iterate over before_request handlers andthe `full_dispatch_request` function to dispatch the request.
+
+KEY RELATIONSHIPS
+- `before_request` calls `append` to add before_request handlers to the list of handlers.
+- `preprocess_request` calls the before_request handlers and stops request handling if any handler returns a non-None value.
+- `full_dispatch_request` calls `preprocess_request` to iterate over before_request handlers before dispatching the request.
+(venv) PS C:\Users\evilk\OneDrive\Desktop\codebase-rag> python langgraph_agent.py
+Loading embedding model...
+Warning: You are sending unauthenticated requests to the HFHub. Please set a HF_TOKEN to enable higher rate limits andfaster downloads.
+Loading weights: 100%|█| 199/199 [00:00<00:00, 9102.44it/s]
+✓ Qdrant connected
+Loading reranker model...
+Loading weights: 100%|█| 105/105 [00:00<00:00, 7772.30it/s]
+Loading graph...
+Graph loaded: 4056 chunks, 15670 edges
+
+QUERY TYPE: flow
+
+FLOW SUMMARY
+The execution flow of `teardown_appcontext` begins with the`AppContext` class, which is used to manage the applicationcontext. When the context is popped, the `do_teardown_appcontext` function is called, which in turn calls all functionsdecorated with `teardown_appcontext`. The `do_teardown_appcontext` function is called by the `AppContext` class, specifically by the `pop` method. The `teardown_appcontext` function registers a function to be called when the app context ispopped, and this registered function is then called by `do_teardown_appcontext`. The flow involves several files, including `flask_repo\src\flask\app.py`, `flask_repo\src\flask\ctx.py`, and `flask_repo\src\flask\sansio\app.py`.
+
+STEP-BY-STEP TRACE
+1. The `AppContext` class is used to manage the applicationcontext, and when the context is popped, the `pop` method is called (flask_repo\src\flask\ctx.py:446-504).
+2. The `pop` method calls the `do_teardown_appcontext` function (flask_repo\src\flask\app.py:1453-1479).
+3. The `do_teardown_appcontext` function calls all functions decorated with `teardown_appcontext` (flask_repo\src\flask\app.py:1453-1479).
+4. The `teardown_appcontext` function registers a function to be called when the app context is popped (flask_repo\src\flask\sansio\app.py:827-855).
+5. The registered function is then called by `do_teardown_appcontext` (flask_repo\src\flask\app.py:1453-1479).
+
+FILES INVOLVED
+- `flask_repo\src\flask\app.py`: This file contains the `do_teardown_appcontext` function, which is called when the application context is popped.
+- `flask_repo\src\flask\ctx.py`: This file contains the `AppContext` class, which manages the application context, and the `pop` method, which calls `do_teardown_appcontext`.
+- `flask_repo\src\flask\sansio\app.py`: This file contains the `teardown_appcontext` function, which registers a function to be called when the app context is popped.
+
+KEY RELATIONSHIPS
+- `AppContext` calls `do_teardown_appcontext` when the context is popped.
+- `do_teardown_appcontext` calls all functions decorated with `teardown_appcontext`.
+- `teardown_appcontext` registers a function to be called when the app context is popped, and this registered function is then called by `do_teardown_appcontext`.
+- The `pop` method of `AppContext` calls `do_teardown_appcontext`, which is why `do_teardown_appcontext` is called whenthe context is popped.
+(venv) PS C:\Users\evilk\OneDrive\Desktop\codebase-rag> 
