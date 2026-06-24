@@ -1,0 +1,10 @@
+How are blueprints registered?
+How does request dispatching work?
+How are routes registered?
+How are before_request handlers executed?
+How does teardown_appcontext work?
+Where is save_session implemented?
+What breaks if register_blueprint changes?
+How are error handlers resolved?
+How does URL matching work?
+How are sessions saved?

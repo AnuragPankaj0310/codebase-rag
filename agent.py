@@ -66,6 +66,14 @@ def is_test(file_path):
     return "/tests/" in fp or "/test/" in fp or "test_" in os.path.basename(fp)
 
 
+UTILITY_FUNCTIONS = {
+    "append",
+    "extend",
+    "insert",
+    "update"
+}
+
+
 # =====================================
 # ALLOWED LIST BUILDER
 # =====================================
@@ -95,7 +103,8 @@ def build_allowed_lists(results):
                 c = _chunk_map.get(edge["target"])
                 if not c:
                     continue
-                if c["name"] == "append":
+                if c["name"] in UTILITY_FUNCTIONS: 
+                    # changed this
                     continue
                 if c and not is_test(c["file_path"]) and not is_noise(c["file_path"]):
                     allowed_functions.add(c["name"])
@@ -108,7 +117,8 @@ def build_allowed_lists(results):
                 c = _chunk_map.get(edge["source"])
                 if not c:
                     continue
-                if c["name"] == "append":
+                if c["name"] in UTILITY_FUNCTIONS: 
+                    # changed this
                     continue
                 if c and not is_test(c["file_path"]) and not is_noise(c["file_path"]):
                     allowed_functions.add(c["name"])
@@ -161,6 +171,10 @@ def build_graph_context(results):
                 c = _chunk_map.get(callee_id)
                 if not c:
                     continue
+
+                if c["name"] in UTILITY_FUNCTIONS:
+                    continue
+
                 if is_noise(c["file_path"]) or is_test(c["file_path"]):
                     continue
                 print("\nGRAPH CALLEE:")
@@ -177,8 +191,13 @@ def build_graph_context(results):
                 if ":" not in caller_id:
                     continue
                 c = _chunk_map.get(caller_id)
+
                 if not c:
                     continue
+
+                if c["name"] in UTILITY_FUNCTIONS:
+                    continue
+
                 if is_noise(c["file_path"]) or is_test(c["file_path"]):
                     continue
                 print("\nGRAPH CALLER:")

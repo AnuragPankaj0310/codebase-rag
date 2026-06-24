@@ -6,7 +6,10 @@
 
   "noise_files": [
     "wrappers.py",
-    "helpers.py"
+    "helpers.py",
+    "mixins.py",
+    "request.py",
+    "cli.py"
   ],
 
   "noise_dirs": [
