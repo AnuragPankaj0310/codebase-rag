@@ -1,0 +1,1101 @@
+[
+  {
+    "id": 1,
+    "question": "How are blueprints registered?",
+    "generated_answer": "FLOW SUMMARY\nThe registration of blueprints involves a series of function calls starting from the `register_blueprint` function, which is responsible for registering a blueprint on the application. This function calls the `register` function, which in turn creates a `BlueprintSetupState` object using the `make_setup_state` function and then calls the `_merge_blueprint_funcs` function to merge the blueprint functions. The `BlueprintSetupState` object is used to pass the application and options to the register callback functions. The `make_setup_state` function is also called by the `Blueprint` class to create a `BlueprintSetupState` object. The `add_template_filter` function is called by the `Blueprint` class to register a custom Jinja filter.\n\nSTEP-BY-STEP TRACE\n1. The `register_blueprint` function is called to register a blueprint on the application, which calls the `register` function.\n2. The `register` function creates a `BlueprintSetupState` object using the `make_setup_state` function, passing the application and options to it.\n3. The `make_setup_state` function returns a `BlueprintSetupState` object, which is then used by the `register` function to call the register callback functions.\n4. The `register` function calls the `_merge_blueprint_funcs` function to merge the blueprint functions.\n5. The `Blueprint` class calls the `make_setup_state` function to create a `BlueprintSetupState` object, which is used to pass the application and options to the register callback functions.\n6. The `Blueprint` class also calls the `add_template_filter` function to register a custom Jinja filter.\n\nFILES INVOLVED\n- `flask_repo\\src\\flask\\sansio\\blueprints.py`: This file contains the `register_blueprint`, `register`, `make_setup_state`, `Blueprint`, and `_merge_blueprint_funcs` functions, which are responsible for registering blueprints and creating `BlueprintSetupState` objects.\n- `flask_repo\\src\\flask\\sansio\\app.py`: This file contains the `add_template_filter` function, which is called by the `Blueprint` class to register a custom Jinja filter.\n- `flask_repo\\src\\flask\\sansio\\scaffold.py`: This file contains the `_endpoint_from_view_func` function, which is called by the `BlueprintSetupState` class.\n\nKEY RELATIONSHIPS\n- `register_blueprint` calls `register` to register a blueprint on the application.\n- `register` calls `make_setup_state` to create a `BlueprintSetupState` object.\n- `register` calls `_merge_blueprint_funcs` to merge the blueprint functions.\n- `Blueprint` calls `make_setup_state` to create a `BlueprintSetupState` object.\n- `Blueprint` calls `add_template_filter` to register a custom Jinja filter.\n- `BlueprintSetupState` is created by `make_setup_state` and used by `register` to call the register callback functions.",
+    "query_type": "flow",
+    "retrieval_results": [
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\blueprints.py:register:273",
+        "name": "register",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\blueprints.py",
+        "start_line": 273,
+        "end_line": 377,
+        "content": "def register(self, app: App, options: dict[str, t.Any]) -> None:\n        \"\"\"Called by :meth:`Flask.register_blueprint` to register all\n        views and callbacks registered on the blueprint with the\n        application. Creates a :class:`.BlueprintSetupState` and calls\n        each :meth:`record` callback with it.\n\n        :param app: The application this blueprint is being registered\n            with.\n        :param options: Keyword arguments forwarded from\n            :meth:`~Flask.register_blueprint`.\n\n        .. versionchanged:: 2.3\n            Nested blueprints now correctly apply subdomains.\n\n        .. versionchanged:: 2.1\n            Registering the same blueprint with the same name multiple\n            times is an error.\n\n        .. versionchanged:: 2.0.1\n            Nested blueprints are registered with their dotted name.\n            This allows different blueprints with the same name to be\n            nested at different locations.\n\n        .. versionchanged:: 2.0.1\n       ",
+        "score": 0.07377049180327869,
+        "rerank_score": 5.437051773071289,
+        "final_score": 3.828067388690886
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\blueprints.py:register_blueprint:256",
+        "name": "register_blueprint",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\blueprints.py",
+        "start_line": 256,
+        "end_line": 271,
+        "content": "def register_blueprint(self, blueprint: Blueprint, **options: t.Any) -> None:\n        \"\"\"Register a :class:`~flask.Blueprint` on this blueprint. Keyword\n        arguments passed to this method will override the defaults set\n        on the blueprint.\n\n        .. versionchanged:: 2.0.1\n            The ``name`` option can be used to change the (pre-dotted)\n            name the blueprint is registered with. This allows the same\n            blueprint to be registered multiple times with unique names\n            for ``url_for``.\n\n        .. versionadded:: 2.0\n        \"\"\"\n        if blueprint is self:\n            raise ValueError(\"Cannot register a blueprint on itself\")\n        self._blueprints.append((blueprint, options))",
+        "score": 0.07044592030360532,
+        "rerank_score": 5.4011921882629395,
+        "final_score": 3.8019683078751387
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\blueprints.py:Blueprint:119",
+        "name": "Blueprint",
+        "type": "class",
+        "file_path": "flask_repo\\src\\flask\\sansio\\blueprints.py",
+        "start_line": 119,
+        "end_line": 692,
+        "content": "class Blueprint(Scaffold):\n    \"\"\"Represents a blueprint, a collection of routes and other\n    app-related functions that can be registered on a real application\n    later.\n\n    A blueprint is an object that allows defining application functions\n    without requiring an application object ahead of time. It uses the\n    same decorators as :class:`~flask.Flask`, but defers the need for an\n    application by recording them for later registration.\n\n    Decorating a function with a blueprint creates a deferred function\n    that is called with :class:`~flask.blueprints.BlueprintSetupState`\n    when the blueprint is registered on an application.\n\n    See :doc:`/blueprints` for more information.\n\n    :param name: The name of the blueprint. Will be prepended to each\n        endpoint name.\n    :param import_name: The name of the blueprint package, usually\n        ``__name__``. This helps locate the ``root_path`` for the\n        blueprint.\n    :param static_folder: A folder with static files that",
+        "score": 0.0643879173290938,
+        "rerank_score": 5.324808597564697,
+        "final_score": 3.746682393494016
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\blueprints.py:__init__:41",
+        "name": "__init__",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\blueprints.py",
+        "start_line": 41,
+        "end_line": 85,
+        "content": "def __init__(\n        self,\n        blueprint: Blueprint,\n        app: App,\n        options: t.Any,\n        first_registration: bool,\n    ) -> None:\n        #: a reference to the current application\n        self.app = app\n\n        #: a reference to the blueprint that created this setup state.\n        self.blueprint = blueprint\n\n        #: a dictionary with all options that were passed to the\n        #: :meth:`~flask.Flask.register_blueprint` method.\n        self.options = options\n\n        #: as blueprints can be registered multiple times with the\n        #: application and not everything wants to be registered\n        #: multiple times on it, this attribute can be used to figure\n        #: out if the blueprint was registered in the past already.\n        self.first_registration = first_registration\n\n        subdomain = self.options.get(\"subdomain\")\n        if subdomain is None:\n            subdomain = self.blueprint.subdomain\n\n        #: The subdomain that the blueprint should be active",
+        "score": 0.0630952380952381,
+        "rerank_score": 4.802573204040527,
+        "final_score": 3.38072981425694
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\blueprints.py:BlueprintSetupState:34",
+        "name": "BlueprintSetupState",
+        "type": "class",
+        "file_path": "flask_repo\\src\\flask\\sansio\\blueprints.py",
+        "start_line": 34,
+        "end_line": 116,
+        "content": "class BlueprintSetupState:\n    \"\"\"Temporary holder object for registering a blueprint with the\n    application.  An instance of this class is created by the\n    :meth:`~flask.Blueprint.make_setup_state` method and later passed\n    to all register callback functions.\n    \"\"\"\n\n    def __init__(\n        self,\n        blueprint: Blueprint,\n        app: App,\n        options: t.Any,\n        first_registration: bool,\n    ) -> None:\n        #: a reference to the current application\n        self.app = app\n\n        #: a reference to the blueprint that created this setup state.\n        self.blueprint = blueprint\n\n        #: a dictionary with all options that were passed to the\n        #: :meth:`~flask.Flask.register_blueprint` method.\n        self.options = options\n\n        #: as blueprints can be registered multiple times with the\n        #: application and not everything wants to be registered\n        #: multiple times on it, this attribute can be used to figure\n        #: out if the blueprint ",
+        "score": 0.06562499999999999,
+        "rerank_score": 4.364799976348877,
+        "final_score": 3.0750474834442136
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\blueprints.py:_check_setup_finished:213",
+        "name": "_check_setup_finished",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\blueprints.py",
+        "start_line": 213,
+        "end_line": 221,
+        "content": "def _check_setup_finished(self, f_name: str) -> None:\n        if self._got_registered_once:\n            raise AssertionError(\n                f\"The setup method '{f_name}' can no longer be called on the blueprint\"\n                f\" '{self.name}'. It has already been registered at least once, any\"\n                \" changes will not be applied consistently.\\n\"\n                \"Make sure all imports, decorators, functions, etc. needed to set up\"\n                \" the blueprint are done before registering it.\"\n            )",
+        "score": 0.06858564321250889,
+        "rerank_score": 4.083454132080078,
+        "final_score": 2.878993585419807
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\app.py:register_blueprint:570",
+        "name": "register_blueprint",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\app.py",
+        "start_line": 570,
+        "end_line": 595,
+        "content": "def register_blueprint(self, blueprint: Blueprint, **options: t.Any) -> None:\n        \"\"\"Register a :class:`~flask.Blueprint` on the application. Keyword\n        arguments passed to this method will override the defaults set on the\n        blueprint.\n\n        Calls the blueprint's :meth:`~flask.Blueprint.register` method after\n        recording the blueprint in the application's :attr:`blueprints`.\n\n        :param blueprint: The blueprint to register.\n        :param url_prefix: Blueprint routes will be prefixed with this.\n        :param subdomain: Blueprint routes will match on this subdomain.\n        :param url_defaults: Blueprint routes will use these default values for\n            view arguments.\n        :param options: Additional keyword arguments are passed to\n            :class:`~flask.blueprints.BlueprintSetupState`. They can be\n            accessed in :meth:`~flask.Blueprint.record` callbacks.\n\n        .. versionchanged:: 2.0.1\n            The ``name`` option can be used to cha",
+        "score": 0.0706959706959707,
+        "rerank_score": 4.036502838134766,
+        "final_score": 2.846760777903127
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\app.py:iter_blueprints:597",
+        "name": "iter_blueprints",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\app.py",
+        "start_line": 597,
+        "end_line": 602,
+        "content": "def iter_blueprints(self) -> t.ValuesView[Blueprint]:\n        \"\"\"Iterates over all blueprints by the order they were registered.\n\n        .. versionadded:: 0.11\n        \"\"\"\n        return self.blueprints.values()",
+        "score": 0.06348395011245145,
+        "rerank_score": 3.3977060317993164,
+        "final_score": 2.3974394072932568
+      }
+    ],
+    "allowed_files": [
+      "flask_repo\\src\\flask\\sansio\\app.py",
+      "flask_repo\\src\\flask\\sansio\\blueprints.py",
+      "flask_repo\\src\\flask\\sansio\\scaffold.py"
+    ],
+    "allowed_functions": [
+      "Blueprint",
+      "BlueprintSetupState",
+      "_merge_blueprint_funcs",
+      "add_app_template_filter",
+      "add_app_template_global",
+      "add_app_template_test",
+      "add_template_filter",
+      "add_template_global",
+      "add_template_test",
+      "errorhandler",
+      "make_setup_state",
+      "record_once",
+      "register",
+      "register_blueprint"
+    ],
+    "ground_truth": {
+      "id": 1,
+      "question": "How are blueprints registered?",
+      "query_type": "flow",
+      "expected_files": [
+        "flask_repo\\src\\flask\\sansio\\app.py",
+        "flask_repo\\src\\flask\\sansio\\blueprints.py",
+        "flask_repo\\src\\flask\\sansio\\scaffold.py"
+      ],
+      "expected_functions": [
+        "BlueprintSetupState",
+        "_endpoint_from_view_func",
+        "_merge_blueprint_funcs",
+        "make_setup_state",
+        "register",
+        "register_blueprint"
+      ],
+      "reference_answer": "The execution flow for registering blueprints begins with the `register_blueprint` function, which is called on a `Blueprint` object. This function calls the `register` function, passing in the application and options. The `register` function then creates a `BlueprintSetupState` object using the `make_setup_state` function and calls the `_merge_blueprint_funcs` function to merge the blueprint functions. The `BlueprintSetupState` object is used to register the blueprint with the application, and the `_merge_blueprint_funcs` function is used to merge the blueprint functions with the application functions. The `make_setup_state` function is also called by the `Blueprint` class to create a `BlueprintSetupState` object. The `BlueprintSetupState` object is then used to register the blueprint with the application.",
+      "notes": ""
+    }
+  },
+  {
+    "id": 2,
+    "question": "How does request dispatching work?",
+    "generated_answer": "FLOW SUMMARY\nThe request dispatching process in Flask begins with the `full_dispatch_request` function, which is called by `Flask` and `wsgi_app`. This function then calls `dispatch_request`, which is responsible for matching the URL and returning the return value of the view or error handler. If a routing exception occurs, `dispatch_request` calls `raise_routing_exception`. The `ensure_sync` function is also called by `dispatch_request` to ensure that the view function is synchronous. After `dispatch_request` returns, `full_dispatch_request` calls `finalize_request` to convert the return value into a response and invoke postprocessing functions. The `finalize_request` function may also call `make_response` and `process_response` to further process the response.\n\nSTEP-BY-STEP TRACE\n1. `full_dispatch_request` is called by `Flask` or `wsgi_app` in `flask_repo\\src\\flask\\app.py`.\n2. `full_dispatch_request` calls `dispatch_request` in `flask_repo\\src\\flask\\app.py` to match the URL and return the view or error handler return value.\n3. If a routing exception occurs, `dispatch_request` calls `raise_routing_exception` in `flask_repo\\src\\flask\\app.py` to handle the exception.\n4. `dispatch_request` calls `ensure_sync` in `flask_repo\\src\\flask\\app.py` to ensure that the view function is synchronous.\n5. After `dispatch_request` returns, `full_dispatch_request` calls `finalize_request` in `flask_repo\\src\\flask\\app.py` to convert the return value into a response and invoke postprocessing functions.\n6. `finalize_request` may call `make_response` in `flask_repo\\src\\flask\\app.py` to convert the return value into a response object.\n7. `finalize_request` may also call `process_response` in `flask_repo\\src\\flask\\app.py` to further process the response.\n\nFILES INVOLVED\n- `flask_repo\\src\\flask\\app.py`: This file contains the `full_dispatch_request`, `dispatch_request`, `raise_routing_exception`, `ensure_sync`, `finalize_request`, `make_response`, and `process_response` functions.\n- `flask_repo\\src\\flask\\views.py`: This file contains a different implementation of the `dispatch_request` function.\n\nKEY RELATIONSHIPS\n- `full_dispatch_request` calls `dispatch_request` to match the URL and return the view or error handler return value.\n- `dispatch_request` calls `raise_routing_exception` to handle routing exceptions.\n- `dispatch_request` calls `ensure_sync` to ensure that the view function is synchronous.\n- `full_dispatch_request` calls `finalize_request` to convert the return value into a response and invoke postprocessing functions.\n- `finalize_request` may call `make_response` and `process_response` to further process the response.",
+    "query_type": "flow",
+    "retrieval_results": [
+      {
+        "id": "flask_repo\\src\\flask\\app.py:dispatch_request:966",
+        "name": "dispatch_request",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\app.py",
+        "start_line": 966,
+        "end_line": 990,
+        "content": "def dispatch_request(self, ctx: AppContext) -> ft.ResponseReturnValue:\n        \"\"\"Does the request dispatching.  Matches the URL and returns the\n        return value of the view or error handler.  This does not have to\n        be a response object.  In order to convert the return value to a\n        proper response object, call :func:`make_response`.\n\n        .. versionchanged:: 0.7\n           This no longer does the exception handling, this code was\n           moved to the new :meth:`full_dispatch_request`.\n        \"\"\"\n        req = ctx.request\n\n        if req.routing_exception is not None:\n            self.raise_routing_exception(req)\n        rule: Rule = req.url_rule  # type: ignore[assignment]\n        # if we provide automatic options for this URL and the\n        # request came with the OPTIONS method, reply automatically\n        if (\n            getattr(rule, \"provide_automatic_options\", False)\n            and req.method == \"OPTIONS\"\n        ):\n            return self.make_default_",
+        "score": 0.06459016393442624,
+        "rerank_score": 4.8983564376831055,
+        "final_score": 3.4482265555585014
+      },
+      {
+        "id": "flask_repo\\src\\flask\\app.py:full_dispatch_request:992",
+        "name": "full_dispatch_request",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\app.py",
+        "start_line": 992,
+        "end_line": 1019,
+        "content": "def full_dispatch_request(self, ctx: AppContext) -> Response:\n        \"\"\"Dispatches the request and on top of that performs request\n        pre and postprocessing as well as HTTP exception catching and\n        error handling.\n\n        .. versionadded:: 0.7\n        \"\"\"\n        if not self._got_first_request and self.should_ignore_error is not None:\n            import warnings\n\n            warnings.warn(\n                \"The 'should_ignore_error' method is deprecated and will\"\n                \" be removed in Flask 3.3. Handle errors as needed in\"\n                \" teardown handlers instead.\",\n                DeprecationWarning,\n                stacklevel=1,\n            )\n\n        self._got_first_request = True\n\n        try:\n            request_started.send(self, _async_wrapper=self.ensure_sync)\n            rv = self.preprocess_request(ctx)\n            if rv is None:\n                rv = self.dispatch_request(ctx)\n        except Exception as e:\n            rv = self.handle_user_exception(",
+        "score": 0.044117647058823525,
+        "rerank_score": 2.2760744094848633,
+        "final_score": 1.6064873807570512
+      },
+      {
+        "id": "flask_repo\\src\\flask\\views.py:dispatch_request:182",
+        "name": "dispatch_request",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\views.py",
+        "start_line": 182,
+        "end_line": 191,
+        "content": "def dispatch_request(self, **kwargs: t.Any) -> ft.ResponseReturnValue:\n        meth = getattr(self, request.method.lower(), None)\n\n        # If the request method is HEAD and we don't have a handler for it\n        # retry with GET.\n        if meth is None and request.method == \"HEAD\":\n            meth = getattr(self, \"get\", None)\n\n        assert meth is not None, f\"Unimplemented method {request.method!r}\"\n        return current_app.ensure_sync(meth)(**kwargs)  # type: ignore[no-any-return]",
+        "score": 0.04838709677419355,
+        "rerank_score": 2.2198855876922607,
+        "final_score": 1.5684360404168405
+      },
+      {
+        "id": "flask_repo\\src\\flask\\app.py:finalize_request:1021",
+        "name": "finalize_request",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\app.py",
+        "start_line": 1021,
+        "end_line": 1051,
+        "content": "def finalize_request(\n        self,\n        ctx: AppContext,\n        rv: ft.ResponseReturnValue | HTTPException,\n        from_error_handler: bool = False,\n    ) -> Response:\n        \"\"\"Given the return value from a view function this finalizes\n        the request by converting it into a response and invoking the\n        postprocessing functions.  This is invoked for both normal\n        request dispatching as well as error handlers.\n\n        Because this means that it might be called as a result of a\n        failure a special safe mode is available which can be enabled\n        with the `from_error_handler` flag.  If enabled, failures in\n        response processing will be logged and otherwise ignored.\n\n        :internal:\n        \"\"\"\n        response = self.make_response(rv)\n        try:\n            response = self.process_response(ctx, response)\n            request_finished.send(\n                self, _async_wrapper=self.ensure_sync, response=response\n            )\n        except Exception:\n            if not from_error_handler:\n                raise\n            self.logger.exception(\n                \"Request finalizing failed with an error while handling an error\"\n            )\n        return response",
+        "score": 0.01948051948051948,
+        "rerank_score": 2.1095099449157715,
+        "final_score": 1.4825011172851956
+      },
+      {
+        "id": "flask_repo\\src\\flask\\views.py:dispatch_request:78",
+        "name": "dispatch_request",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\views.py",
+        "start_line": 78,
+        "end_line": 83,
+        "content": "def dispatch_request(self) -> ft.ResponseReturnValue:\n        \"\"\"The actual view function behavior. Subclasses must override\n        this and return a valid response. Any variables from the URL\n        rule are passed as keyword arguments.\n        \"\"\"\n        raise NotImplementedError()",
+        "score": 0.041666666666666664,
+        "rerank_score": 1.7192107439041138,
+        "final_score": 1.2159475207328796
+      },
+      {
+        "id": "werkzeug_repo\\src\\werkzeug\\middleware\\dispatcher.py:DispatcherMiddleware:44",
+        "name": "DispatcherMiddleware",
+        "type": "class",
+        "file_path": "werkzeug_repo\\src\\werkzeug\\middleware\\dispatcher.py",
+        "start_line": 44,
+        "end_line": 81,
+        "content": "class DispatcherMiddleware:\n    \"\"\"Combine multiple applications as a single WSGI application.\n    Requests are dispatched to an application based on the path it is\n    mounted under.\n\n    :param app: The WSGI application to dispatch to if the request\n        doesn't match a mounted path.\n    :param mounts: Maps path prefixes to applications for dispatching.\n    \"\"\"\n\n    def __init__(\n        self,\n        app: WSGIApplication,\n        mounts: dict[str, WSGIApplication] | None = None,\n    ) -> None:\n        self.app = app\n        self.mounts = mounts or {}\n\n    def __call__(\n        self, environ: WSGIEnvironment, start_response: StartResponse\n    ) -> t.Iterable[bytes]:\n        script = environ.get(\"PATH_INFO\", \"\")\n        path_info = \"\"\n\n        while \"/\" in script:\n            if script in self.mounts:\n                app = self.mounts[script]\n                break\n\n            script, last_item = script.rsplit(\"/\", 1)\n            path_info = f\"/{last_item}{path_info}\"\n        else:",
+        "score": 0.061688311688311695,
+        "rerank_score": 1.6061136722564697,
+        "final_score": 1.1427860640860223
+      }
+    ],
+    "allowed_files": [
+      "flask_repo\\src\\flask\\app.py",
+      "flask_repo\\src\\flask\\views.py"
+    ],
+    "allowed_functions": [
+      "Flask",
+      "dispatch_request",
+      "ensure_sync",
+      "finalize_request",
+      "full_dispatch_request",
+      "handle_user_exception",
+      "make_default_options_response",
+      "preprocess_request",
+      "raise_routing_exception",
+      "wsgi_app"
+    ],
+    "ground_truth": {
+      "id": 2,
+      "question": "How does request dispatching work?",
+      "query_type": "flow",
+      "expected_files": [
+        "flask_repo\\src\\flask\\app.py",
+        "flask_repo\\src\\flask\\views.py"
+      ],
+      "expected_functions": [
+        "Flask",
+        "dispatch_request",
+        "ensure_sync",
+        "finalize_request",
+        "full_dispatch_request",
+        "make_response",
+        "raise_routing_exception",
+        "wsgi_app"
+      ],
+      "reference_answer": "The request dispatching flow begins with the `full_dispatch_request` function in `flask_repo\\src\\flask\\app.py`, which calls `dispatch_request` to match the URL and return the view or error handler. `dispatch_request` then calls `raise_routing_exception` if a routing exception occurs, or `ensure_sync` to ensure the view function is synchronous. The result is then passed to `finalize_request` to convert it into a response and invoke postprocessing functions. This flow is initiated by `Flask` or `wsgi_app` in `flask_repo\\src\\flask\\app.py`, which call `full_dispatch_request` to start the dispatching process.",
+      "notes": ""
+    }
+  },
+  {
+    "id": 3,
+    "question": "How are routes registered?",
+    "generated_answer": "FLOW SUMMARY\nThe execution flow for registering routes begins with the `route` function in `flask_repo\\src\\flask\\sansio\\scaffold.py`, which calls `add_url_rule` in the same file to register a rule for routing incoming requests and building URLs. The `add_url_rule` function is also called by the `register_blueprint` function in `flask_repo\\src\\flask\\sansio\\app.py` when a blueprint is registered on the application. The `Scaffold` class in `flask_repo\\src\\flask\\sansio\\scaffold.py` and the `Blueprint` class in `flask_repo\\src\\flask\\sansio\\blueprints.py` both play a role in this process, with the `Blueprint` class using the `add_url_rule` function to register rules for its routes.\n\nSTEP-BY-STEP TRACE\n1. The `route` function in `flask_repo\\src\\flask\\sansio\\scaffold.py` is called to decorate a view function and register it with a given URL rule and options.\n2. The `route` function calls `add_url_rule` in `flask_repo\\src\\flask\\sansio\\scaffold.py` to register the rule.\n3. The `add_url_rule` function in `flask_repo\\src\\flask\\sansio\\scaffold.py` registers the rule for routing incoming requests and building URLs.\n4. When a blueprint is registered on the application using the `register_blueprint` function in `flask_repo\\src\\flask\\sansio\\app.py`, it calls the `add_url_rule` function to register its routes.\n5. The `Scaffold` class in `flask_repo\\src\\flask\\sansio\\scaffold.py` provides common behavior for registering routes, and is used by the `Blueprint` class in `flask_repo\\src\\flask\\sansio\\blueprints.py`.\n6. The `Blueprint` class uses the `add_url_rule` function to register rules for its routes, and also uses the `_endpoint_from_view_func` function in `flask_repo\\src\\flask\\sansio\\scaffold.py` to determine the default endpoint for a given view function.\n\nFILES INVOLVED\n- `flask_repo\\src\\flask\\sansio\\scaffold.py`: This file contains the `route`, `add_url_rule`, and `Scaffold` class, which are all involved in registering routes.\n- `flask_repo\\src\\flask\\sansio\\app.py`: This file contains the `register_blueprint` function, which is used to register a blueprint on the application.\n\nKEY RELATIONSHIPS\n- The `route` function calls `add_url_rule` to register a rule for routing incoming requests and building URLs.\n- The `register_blueprint` function calls `add_url_rule` to register the routes of a blueprint.\n- The `Scaffold` class provides common behavior for registering routes, and is used by the `Blueprint` class.\n- The `Blueprint` class uses the `add_url_rule` function to register rules for its routes, and also uses the `_endpoint_from_view_func` function to determine the default endpoint for a given view function.",
+    "query_type": "flow",
+    "retrieval_results": [
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\scaffold.py:route:336",
+        "name": "route",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\scaffold.py",
+        "start_line": 336,
+        "end_line": 365,
+        "content": "def route(self, rule: str, **options: t.Any) -> t.Callable[[T_route], T_route]:\n        \"\"\"Decorate a view function to register it with the given URL\n        rule and options. Calls :meth:`add_url_rule`, which has more\n        details about the implementation.\n\n        .. code-block:: python\n\n            @app.route(\"/\")\n            def index():\n                return \"Hello, World!\"\n\n        See :ref:`url-route-registrations`.\n\n        The endpoint name for the route defaults to the name of the view\n        function if the ``endpoint`` parameter isn't passed.\n\n        The ``methods`` parameter defaults to ``[\"GET\"]``. ``HEAD`` and\n        ``OPTIONS`` are added automatically.\n\n        :param rule: The URL rule string.\n        :param options: Extra options passed to the\n            :class:`~werkzeug.routing.Rule` object.\n        \"\"\"\n\n        def decorator(f: T_route) -> T_route:\n            endpoint = options.pop(\"endpoint\", None)\n            self.add_url_rule(rule, endpoint, f, **option",
+        "score": 0.04918032786885246,
+        "rerank_score": 1.32778799533844,
+        "final_score": 0.9442056950975637
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\scaffold.py:add_url_rule:368",
+        "name": "add_url_rule",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\scaffold.py",
+        "start_line": 368,
+        "end_line": 433,
+        "content": "def add_url_rule(\n        self,\n        rule: str,\n        endpoint: str | None = None,\n        view_func: ft.RouteCallable | None = None,\n        provide_automatic_options: bool | None = None,\n        **options: t.Any,\n    ) -> None:\n        \"\"\"Register a rule for routing incoming requests and building\n        URLs. The :meth:`route` decorator is a shortcut to call this\n        with the ``view_func`` argument. These are equivalent:\n\n        .. code-block:: python\n\n            @app.route(\"/\")\n            def index():\n                ...\n\n        .. code-block:: python\n\n            def index():\n                ...\n\n            app.add_url_rule(\"/\", view_func=index)\n\n        See :ref:`url-route-registrations`.\n\n        The endpoint name for the route defaults to the name of the view\n        function if the ``endpoint`` parameter isn't passed. An error\n        will be raised if a function has already been registered for the\n        endpoint.\n\n        The ``methods`` parameter defaults to ",
+        "score": 0.044117647058823525,
+        "rerank_score": -0.599111795425415,
+        "final_score": -0.40614296268014344
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\app.py:register_blueprint:570",
+        "name": "register_blueprint",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\app.py",
+        "start_line": 570,
+        "end_line": 595,
+        "content": "def register_blueprint(self, blueprint: Blueprint, **options: t.Any) -> None:\n        \"\"\"Register a :class:`~flask.Blueprint` on the application. Keyword\n        arguments passed to this method will override the defaults set on the\n        blueprint.\n\n        Calls the blueprint's :meth:`~flask.Blueprint.register` method after\n        recording the blueprint in the application's :attr:`blueprints`.\n\n        :param blueprint: The blueprint to register.\n        :param url_prefix: Blueprint routes will be prefixed with this.\n        :param subdomain: Blueprint routes will match on this subdomain.\n        :param url_defaults: Blueprint routes will use these default values for\n            view arguments.\n        :param options: Additional keyword arguments are passed to\n            :class:`~flask.blueprints.BlueprintSetupState`. They can be\n            accessed in :meth:`~flask.Blueprint.record` callbacks.\n\n        .. versionchanged:: 2.0.1\n            The ``name`` option can be used to cha",
+        "score": 0.07297726070861979,
+        "rerank_score": -0.9943384528160095,
+        "final_score": -0.6741437387586207
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\blueprints.py:Blueprint:119",
+        "name": "Blueprint",
+        "type": "class",
+        "file_path": "flask_repo\\src\\flask\\sansio\\blueprints.py",
+        "start_line": 119,
+        "end_line": 692,
+        "content": "class Blueprint(Scaffold):\n    \"\"\"Represents a blueprint, a collection of routes and other\n    app-related functions that can be registered on a real application\n    later.\n\n    A blueprint is an object that allows defining application functions\n    without requiring an application object ahead of time. It uses the\n    same decorators as :class:`~flask.Flask`, but defers the need for an\n    application by recording them for later registration.\n\n    Decorating a function with a blueprint creates a deferred function\n    that is called with :class:`~flask.blueprints.BlueprintSetupState`\n    when the blueprint is registered on an application.\n\n    See :doc:`/blueprints` for more information.\n\n    :param name: The name of the blueprint. Will be prepended to each\n        endpoint name.\n    :param import_name: The name of the blueprint package, usually\n        ``__name__``. This helps locate the ``root_path`` for the\n        blueprint.\n    :param static_folder: A folder with static files that should be\n        served by the blueprint's static route. The path is relative to\n        the blueprint's root path. Blueprint static files are disabled\n        by default.\n    :param static_url_path: The url to serve static files from.\n        Defaults to ``static_folder``. If the blueprint does not have\n        a ``url_prefix``, the app's static route will take precedence,\n        and the blueprint's static files won't be accessible.\n    :param template_folder: A folder with templates that should be added\n        to the app's template search path. The path is relative to the\n        blueprint's root path. Blueprint templates are disabled by\n        default. Blueprint templates have a lower precedence than those\n        in the app's templates folder.\n    :param url_prefix: A path to prepend to all of the blueprint's URLs,\n        to make them distinct from the rest of the app's routes.\n    :param subdomain: A subdomain that blueprint routes will match on by\n        default.\n    :param url_defaults: A dict of default values that blueprint routes\n        will receive by default.\n    :param root_path: By default, the blueprint will automatically set\n        this based on ``import_name``. In certain situations this\n        automatic detection can fail, so the path can be specified\n        manually instead.\n\n    .. versionchanged:: 1.1.0\n        Blueprints have a ``cli`` group to register nested CLI commands.\n        The ``cli_group`` parameter controls the name of the group under\n        the ``flask`` command.\n\n    .. versionadded:: 0.7\n    \"\"\"\n\n    _got_registered_once = False\n\n    def __init__(\n        self,\n        name: str,\n        import_name: str,\n        static_folder: str | os.PathLike[str] | None = None,\n        static_url_path: str | None = None,\n        template_folder: str | os.PathLike[str] | None = None,\n        url_prefix: str | None = None,\n        subdomain: str | None = None,\n        url_defaults: dict[str, t.Any] | None = None,\n        root_path: str | None = None,\n        cli_group: str | None = _sentinel,  # type: ignore[assignment]\n    ):\n        super().__init__(\n            import_name=import_name,\n            static_folder=static_folder,\n            static_url_path=static_url_path,\n            template_folder=template_folder,\n            root_path=root_path,\n        )\n\n        if not name:\n            raise ValueError(\"'name' may not be empty.\")\n\n        if \".\" in name:\n            raise ValueError(\"'name' may not contain a dot '.' character.\")\n\n        self.name = name\n        self.url_prefix = url_prefix\n        self.subdomain = subdomain\n        self.deferred_functions: list[DeferredSetupFunction] = []\n\n        if url_defaults is None:\n            url_defaults = {}\n\n        self.url_values_defaults = url_defaults\n        self.cli_group = cli_group\n        self._blueprints: list[tuple[Blueprint, dict[str, t.Any]]] = []\n\n    def _check_setup_finished(self, f_name: str) -> None:\n        if self._got_registered_once:\n            raise AssertionError(\n                f\"The setup method '{f_name}' can no longer be called on the blueprint\"\n                f\" '{self.name}'. It has already been registered at least once, any\"\n                \" changes will not be applied consistently.\\n\"\n                \"Make sure all imports, decorators, functions, etc. needed to set up\"\n                \" the blueprint are done before registering it.\"\n            )\n\n    @setupmethod\n    def record(self, func: DeferredSetupFunction) -> None:\n        \"\"\"Registers a function that is called when the blueprint is\n        registered on the application.  This function is called with the\n        state as argument as returned by the :meth:`make_setup_state`\n        method.\n        \"\"\"\n        self.deferred_functions.append(func)\n\n    @setupmethod\n    def record_once(self, func: DeferredSetupFunction) -> None:\n        \"\"\"Works like :meth:`record` but wraps the function in another\n        function that will ensure the function is only called once.  If the\n        blueprint is registered a second time on the application, the\n        function passed is not called.\n        \"\"\"\n\n        def wrapper(state: BlueprintSetupState) -> None:\n            if state.first_registration:\n                func(state)\n\n        self.record(update_wrapper(wrapper, func))\n\n    def make_setup_state(\n        self, app: App, options: dict[str, t.Any], first_registration: bool = False\n    ) -> BlueprintSetupState:\n        \"\"\"Creates an instance of :meth:`~flask.blueprints.BlueprintSetupState`\n        object that is later passed to the register callback functions.\n        Subclasses can override this to return a subclass of the setup state.\n        \"\"\"\n        return BlueprintSetupState(self, app, options, first_registration)\n\n    @setupmethod\n    def register_blueprint(self, blueprint: Blueprint, **options: t.Any) -> None:\n        \"\"\"Register a :class:`~flask.Blueprint` on this blueprint. Keyword\n        arguments passed to this method will override the defaults set\n        on the blueprint.\n\n        .. versionchanged:: 2.0.1\n            The ``name`` option can be used to change the (pre-dotted)\n            name the blueprint is registered with. This allows the same\n            blueprint to be registered multiple times with unique names\n            for ``url_for``.\n\n        .. versionadded:: 2.0\n        \"\"\"\n        if blueprint is self:\n            raise ValueError(\"Cannot register a blueprint on itself\")\n        self._blueprints.append((blueprint, options))\n\n    def register(self, app: App, options: dict[str, t.Any]) -> None:\n        \"\"\"Called by :meth:`Flask.register_blueprint` to register all\n        views and callbacks registered on the blueprint with the\n        application. Creates a :class:`.BlueprintSetupState` and calls\n        each :meth:`record` callback with it.\n\n        :param app: The application this blueprint is being registered\n            with.\n        :param options: Keyword arguments forwarded from\n            :meth:`~Flask.register_blueprint`.\n\n        .. versionchanged:: 2.3\n            Nested blueprints now correctly apply subdomains.\n\n        .. versionchanged:: 2.1\n            Registering the same blueprint with the same name multiple\n            times is an error.\n\n        .. versionchanged:: 2.0.1\n            Nested blueprints are registered with their dotted name.\n            This allows different blueprints with the same name to be\n            nested at different locations.\n\n        .. versionchanged:: 2.0.1\n            The ``name`` option can be used to change the (pre-dotted)\n            name the blueprint is registered with. This allows the same\n            blueprint to be registered multiple times with unique names\n            for ``url_for``.\n        \"\"\"\n        name_prefix = options.get(\"name_prefix\", \"\")\n        self_name = options.get(\"name\", self.name)\n        name = f\"{name_prefix}.{self_name}\".lstrip(\".\")\n\n        if name in app.blueprints:\n            bp_desc = \"this\" if app.blueprints[name] is self else \"a different\"\n            existing_at = f\" '{name}'\" if self_name != name else \"\"\n\n            raise ValueError(\n                f\"The name '{self_name}' is already registered for\"\n                f\" {bp_desc} blueprint{existing_at}. Use 'name=' to\"\n                f\" provide a unique name.\"\n            )\n\n        first_bp_registration = not any(bp is self for bp in app.blueprints.values())\n        first_name_registration = name not in app.blueprints\n\n        app.blueprints[name] = self\n        self._got_registered_once = True\n        state = self.make_setup_state(app, options, first_bp_registration)\n\n        if self.has_static_folder:\n            state.add_url_rule(\n                f\"{self.static_url_path}/<path:filename>\",\n                view_func=self.send_static_file,  # type: ignore[attr-defined]\n                endpoint=\"static\",\n            )\n\n        # Merge blueprint data into parent.\n        if first_bp_registration or first_name_registration:\n            self._merge_blueprint_funcs(app, name)\n\n        for deferred in self.deferred_functions:\n            deferred(state)\n\n        cli_resolved_group = options.get(\"cli_group\", self.cli_group)\n\n        if self.cli.commands:\n            if cli_resolved_group is None:\n                app.cli.commands.update(self.cli.commands)\n            elif cli_resolved_group is _sentinel:\n                self.cli.name = name\n                app.cli.add_command(self.cli)\n            else:\n                self.cli.name = cli_resolved_group\n                app.cli.add_command(self.cli)\n\n        for blueprint, bp_options in self._blueprints:\n            bp_options = bp_options.copy()\n            bp_url_prefix = bp_options.get(\"url_prefix\")\n            bp_subdomain = bp_options.get(\"subdomain\")\n\n            if bp_subdomain is None:\n                bp_subdomain = blueprint.subdomain\n\n            if state.subdomain is not None and bp_subdomain is not None:\n                bp_options[\"subdomain\"] = bp_subdomain + \".\" + state.subdomain\n            elif bp_subdomain is not None:\n                bp_options[\"subdomain\"] = bp_subdomain\n            elif state.subdomain is not None:\n                bp_options[\"subdomain\"] = state.subdomain\n\n            if bp_url_prefix is None:\n                bp_url_prefix = blueprint.url_prefix\n\n            if state.url_prefix is not None and bp_url_prefix is not None:\n                bp_options[\"url_prefix\"] = (\n                    state.url_prefix.rstrip(\"/\") + \"/\" + bp_url_prefix.lstrip(\"/\")\n                )\n            elif bp_url_prefix is not None:\n                bp_options[\"url_prefix\"] = bp_url_prefix\n            elif state.url_prefix is not None:\n                bp_options[\"url_prefix\"] = state.url_prefix\n\n            bp_options[\"name_prefix\"] = name\n            blueprint.register(app, bp_options)\n\n    def _merge_blueprint_funcs(self, app: App, name: str) -> None:\n        def extend(\n            bp_dict: dict[ft.AppOrBlueprintKey, list[t.Any]],\n            parent_dict: dict[ft.AppOrBlueprintKey, list[t.Any]],\n        ) -> None:\n            for key, values in bp_dict.items():\n                key = name if key is None else f\"{name}.{key}\"\n                parent_dict[key].extend(values)\n\n        for key, value in self.error_handler_spec.items():\n            key = name if key is None else f\"{name}.{key}\"\n            value = defaultdict(\n                dict,\n                {\n                    code: {exc_class: func for exc_class, func in code_values.items()}\n                    for code, code_values in value.items()\n                },\n            )\n            app.error_handler_spec[key] = value\n\n        for endpoint, func in self.view_functions.items():\n            app.view_functions[endpoint] = func\n\n        extend(self.before_request_funcs, app.before_request_funcs)\n        extend(self.after_request_funcs, app.after_request_funcs)\n        extend(\n            self.teardown_request_funcs,\n            app.teardown_request_funcs,\n        )\n        extend(self.url_default_functions, app.url_default_functions)\n        extend(self.url_value_preprocessors, app.url_value_preprocessors)\n        extend(self.template_context_processors, app.template_context_processors)\n\n    @setupmethod\n    def add_url_rule(\n        self,\n        rule: str,\n        endpoint: str | None = None,\n        view_func: ft.RouteCallable | None = None,\n        provide_automatic_options: bool | None = None,\n        **options: t.Any,\n    ) -> None:\n        \"\"\"Register a URL rule with the blueprint. See :meth:`.Flask.add_url_rule` for\n        full documentation.\n\n        The URL rule is prefixed with the blueprint's URL prefix. The endpoint name,\n        used with :func:`url_for`, is prefixed with the blueprint's name.\n        \"\"\"\n        if endpoint and \".\" in endpoint:\n            raise ValueError(\"'endpoint' may not contain a dot '.' character.\")\n\n        if view_func and hasattr(view_func, \"__name__\") and \".\" in view_func.__name__:\n            raise ValueError(\"'view_func' name may not contain a dot '.' character.\")\n\n        self.record(\n            lambda s: s.add_url_rule(\n                rule,\n                endpoint,\n                view_func,\n                provide_automatic_options=provide_automatic_options,\n                **options,\n            )\n        )\n\n    @t.overload\n    def app_template_filter(self, name: T_template_filter) -> T_template_filter: ...\n    @t.overload\n    def app_template_filter(\n        self, name: str | None = None\n    ) -> t.Callable[[T_template_filter], T_template_filter]: ...\n    @setupmethod\n    def app_template_filter(\n        self, name: T_template_filter | str | None = None\n    ) -> T_template_filter | t.Callable[[T_template_filter], T_template_filter]:\n        \"\"\"Decorate a function to register it as a custom Jinja filter. The name\n        is optional. The decorator may be used without parentheses.\n\n        The :meth:`add_app_template_filter` method may be used to register a\n        function later rather than decorating.\n\n        The filter is available in all templates, not only those under this\n        blueprint. Equivalent to :meth:`.Flask.template_filter`.\n\n        :param name: The name to register the filter as. If not given, uses the\n            function's name.\n        \"\"\"\n        if callable(name):\n            self.add_app_template_filter(name)\n            return name\n\n        def decorator(f: T_template_filter) -> T_template_filter:\n            self.add_app_template_filter(f, name=name)\n            return f\n\n        return decorator\n\n    @setupmethod\n    def add_app_template_filter(\n        self, f: ft.TemplateFilterCallable, name: str | None = None\n    ) -> None:\n        \"\"\"Register a function to use as a custom Jinja filter.\n\n        The :meth:`app_template_filter` decorator can be used to register a\n        function by decorating instead.\n\n        The filter is available in all templates, not only those under this\n        blueprint. Equivalent to :meth:`.Flask.add_template_filter`.\n\n        :param f: The function to register.\n        :param name: The name to register the filter as. If not given, uses the\n            function's name.\n        \"\"\"\n\n        def register_template_filter(state: BlueprintSetupState) -> None:\n            state.app.add_template_filter(f, name=name)\n\n        self.record_once(register_template_filter)\n\n    @t.overload\n    def app_template_test(self, name: T_template_test) -> T_template_test: ...\n    @t.overload\n    def app_template_test(\n        self, name: str | None = None\n    ) -> t.Callable[[T_template_test], T_template_test]: ...\n    @setupmethod\n    def app_template_test(\n        self, name: T_template_test | str | None = None\n    ) -> T_template_test | t.Callable[[T_template_test], T_template_test]:\n        \"\"\"Decorate a function to register it as a custom Jinja test. The name\n        is optional. The decorator may be used without parentheses.\n\n        The :meth:`add_app_template_test` method may be used to register a\n        function later rather than decorating.\n\n        The test is available in all templates, not only those under this\n        blueprint. Equivalent to :meth:`.Flask.template_test`.\n\n        :param name: The name to register the filter as. If not given, uses the\n            function's name.\n\n        .. versionadded:: 0.10\n        \"\"\"\n        if callable(name):\n            self.add_app_template_test(name)\n            return name\n\n        def decorator(f: T_template_test) -> T_template_test:\n            self.add_app_template_test(f, name=name)\n            return f\n\n        return decorator\n\n    @setupmethod\n    def add_app_template_test(\n        self, f: ft.TemplateTestCallable, name: str | None = None\n    ) -> None:\n        \"\"\"Register a function to use as a custom Jinja test.\n\n        The :meth:`app_template_test` decorator can be used to register a\n        function by decorating instead.\n\n        The test is available in all templates, not only those under this\n        blueprint. Equivalent to :meth:`.Flask.add_template_test`.\n\n        :param f: The function to register.\n        :param name: The name to register the test as. If not given, uses the\n            function's name.\n\n        .. versionadded:: 0.10\n        \"\"\"\n\n        def register_template_test(state: BlueprintSetupState) -> None:\n            state.app.add_template_test(f, name=name)\n\n        self.record_once(register_template_test)\n\n    @t.overload\n    def app_template_global(self, name: T_template_global) -> T_template_global: ...\n    @t.overload\n    def app_template_global(\n        self, name: str | None = None\n    ) -> t.Callable[[T_template_global], T_template_global]: ...\n    @setupmethod\n    def app_template_global(\n        self, name: T_template_global | str | None = None\n    ) -> T_template_global | t.Callable[[T_template_global], T_template_global]:\n        \"\"\"Decorate a function to register it as a custom Jinja global. The name\n        is optional. The decorator may be used without parentheses.\n\n        The :meth:`add_app_template_global` method may be used to register a\n        function later rather than decorating.\n\n        The global is available in all templates, not only those under this\n        blueprint. Equivalent to :meth:`.Flask.template_global`.\n\n        :param name: The name to register the global as. If not given, uses the\n            function's name.\n\n        .. versionadded:: 0.10\n        \"\"\"\n        if callable(name):\n            self.add_app_template_global(name)\n            return name\n\n        def decorator(f: T_template_global) -> T_template_global:\n            self.add_app_template_global(f, name=name)\n            return f\n\n        return decorator\n\n    @setupmethod\n    def add_app_template_global(\n        self, f: ft.TemplateGlobalCallable, name: str | None = None\n    ) -> None:\n        \"\"\"Register a function to use as a custom Jinja global.\n\n        The :meth:`app_template_global` decorator can be used to register a function\n        by decorating instead.\n\n        The global is available in all templates, not only those under this\n        blueprint. Equivalent to :meth:`.Flask.add_template_global`.\n\n        :param f: The function to register.\n        :param name: The name to register the global as. If not given, uses the\n            function's name.\n\n        .. versionadded:: 0.10\n        \"\"\"\n\n        def register_template_global(state: BlueprintSetupState) -> None:\n            state.app.add_template_global(f, name=name)\n\n        self.record_once(register_template_global)\n\n    @setupmethod\n    def before_app_request(self, f: T_before_request) -> T_before_request:\n        \"\"\"Like :meth:`before_request`, but before every request, not only those handled\n        by the blueprint. Equivalent to :meth:`.Flask.before_request`.\n        \"\"\"\n        self.record_once(\n            lambda s: s.app.before_request_funcs.setdefault(None, []).append(f)\n        )\n        return f\n\n    @setupmethod\n    def after_app_request(self, f: T_after_request) -> T_after_request:\n        \"\"\"Like :meth:`after_request`, but after every request, not only those handled\n        by the blueprint. Equivalent to :meth:`.Flask.after_request`.\n        \"\"\"\n        self.record_once(\n            lambda s: s.app.after_request_funcs.setdefault(None, []).append(f)\n        )\n        return f\n\n    @setupmethod\n    def teardown_app_request(self, f: T_teardown) -> T_teardown:\n        \"\"\"Like :meth:`teardown_request`, but after every request, not only those\n        handled by the blueprint. Equivalent to :meth:`.Flask.teardown_request`.\n        \"\"\"\n        self.record_once(\n            lambda s: s.app.teardown_request_funcs.setdefault(None, []).append(f)\n        )\n        return f\n\n    @setupmethod\n    def app_context_processor(\n        self, f: T_template_context_processor\n    ) -> T_template_context_processor:\n        \"\"\"Like :meth:`context_processor`, but for templates rendered by every view, not\n        only by the blueprint. Equivalent to :meth:`.Flask.context_processor`.\n        \"\"\"\n        self.record_once(\n            lambda s: s.app.template_context_processors.setdefault(None, []).append(f)\n        )\n        return f\n\n    @setupmethod\n    def app_errorhandler(\n        self, code: type[Exception] | int\n    ) -> t.Callable[[T_error_handler], T_error_handler]:\n        \"\"\"Like :meth:`errorhandler`, but for every request, not only those handled by\n        the blueprint. Equivalent to :meth:`.Flask.errorhandler`.\n        \"\"\"\n\n        def decorator(f: T_error_handler) -> T_error_handler:\n            def from_blueprint(state: BlueprintSetupState) -> None:\n                state.app.errorhandler(code)(f)\n\n            self.record_once(from_blueprint)\n            return f\n\n        return decorator\n\n    @setupmethod\n    def app_url_value_preprocessor(\n        self, f: T_url_value_preprocessor\n    ) -> T_url_value_preprocessor:\n        \"\"\"Like :meth:`url_value_preprocessor`, but for every request, not only those\n        handled by the blueprint. Equivalent to :meth:`.Flask.url_value_preprocessor`.\n        \"\"\"\n        self.record_once(\n            lambda s: s.app.url_value_preprocessors.setdefault(None, []).append(f)\n        )\n        return f\n\n    @setupmethod\n    def app_url_defaults(self, f: T_url_defaults) -> T_url_defaults:\n        \"\"\"Like :meth:`url_defaults`, but for every request, not only those handled by\n        the blueprint. Equivalent to :meth:`.Flask.url_defaults`.\n        \"\"\"\n        self.record_once(\n            lambda s: s.app.url_default_functions.setdefault(None, []).append(f)\n        )\n        return f",
+        "score": 0.022058823529411763,
+        "rerank_score": -1.8162888288497925,
+        "final_score": -1.2647845331360312
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\blueprints.py:add_url_rule:87",
+        "name": "add_url_rule",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\blueprints.py",
+        "start_line": 87,
+        "end_line": 116,
+        "content": "def add_url_rule(\n        self,\n        rule: str,\n        endpoint: str | None = None,\n        view_func: ft.RouteCallable | None = None,\n        **options: t.Any,\n    ) -> None:\n        \"\"\"A helper method to register a rule (and optionally a view function)\n        to the application.  The endpoint is automatically prefixed with the\n        blueprint's name.\n        \"\"\"\n        if self.url_prefix is not None:\n            if rule:\n                rule = \"/\".join((self.url_prefix.rstrip(\"/\"), rule.lstrip(\"/\")))\n            else:\n                rule = self.url_prefix\n        options.setdefault(\"subdomain\", self.subdomain)\n        if endpoint is None:\n            endpoint = _endpoint_from_view_func(view_func)  # type: ignore\n        defaults = self.url_defaults\n        if \"defaults\" in options:\n            defaults = dict(defaults, **options.pop(\"defaults\"))\n\n        self.app.add_url_rule(\n            rule,\n            f\"{self.name_prefix}.{self.name}.{endpoint}\".lstrip(\".\"),\n           ",
+        "score": 0.038461538461538464,
+        "rerank_score": -6.651002883911133,
+        "final_score": -4.644163557199331
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\blueprints.py:register:273",
+        "name": "register",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\blueprints.py",
+        "start_line": 273,
+        "end_line": 377,
+        "content": "def register(self, app: App, options: dict[str, t.Any]) -> None:\n        \"\"\"Called by :meth:`Flask.register_blueprint` to register all\n        views and callbacks registered on the blueprint with the\n        application. Creates a :class:`.BlueprintSetupState` and calls\n        each :meth:`record` callback with it.\n\n        :param app: The application this blueprint is being registered\n            with.\n        :param options: Keyword arguments forwarded from\n            :meth:`~Flask.register_blueprint`.\n\n        .. versionchanged:: 2.3\n            Nested blueprints now correctly apply subdomains.\n\n        .. versionchanged:: 2.1\n            Registering the same blueprint with the same name multiple\n            times is an error.\n\n        .. versionchanged:: 2.0.1\n            Nested blueprints are registered with their dotted name.\n            This allows different blueprints with the same name to be\n            nested at different locations.\n\n        .. versionchanged:: 2.0.1\n       ",
+        "score": 0.06861413043478261,
+        "rerank_score": -7.273948669433594,
+        "final_score": -5.07117982947308
+      }
+    ],
+    "allowed_files": [
+      "flask_repo\\src\\flask\\sansio\\app.py",
+      "flask_repo\\src\\flask\\sansio\\scaffold.py"
+    ],
+    "allowed_functions": [
+      "Scaffold",
+      "_method_route",
+      "add_url_rule",
+      "register_blueprint",
+      "route"
+    ],
+    "ground_truth": {
+      "id": 3,
+      "question": "How are routes registered?",
+      "query_type": "flow",
+      "expected_files": [
+        "flask_repo\\src\\flask\\sansio\\app.py",
+        "flask_repo\\src\\flask\\sansio\\scaffold.py"
+      ],
+      "expected_functions": [
+        "Scaffold",
+        "_method_route",
+        "add_url_rule",
+        "register_blueprint",
+        "route"
+      ],
+      "reference_answer": "The execution flow for registering routes begins with the `route` function in `flask_repo\\src\\flask\\sansio\\scaffold.py`, which calls `add_url_rule` in the same file to register a rule for routing incoming requests and building URLs. The `add_url_rule` function is also called by the `register_blueprint` function in `flask_repo\\src\\flask\\sansio\\app.py` to register a blueprint on the application. The `Scaffold` class in `flask_repo\\src\\flask\\sansio\\scaffold.py` is a common behavior shared between `Flask` and `Blueprint`, and it uses the `route` decorator to register routes. The `_method_route` function in `flask_repo\\src\\flask\\sansio\\scaffold.py` is used to register a route for a specific method.",
+      "notes": ""
+    }
+  },
+  {
+    "id": 4,
+    "question": "How are before_request handlers executed?",
+    "generated_answer": "FLOW SUMMARY\nThe execution flow of before_request handlers begins with the Flask class, which calls the full_dispatch_request function. This function then calls the preprocess_request function, which is responsible for executing the before_request handlers. The before_request handlers are registered using the before_request function, and the before_app_request function also registers handlers that are executed before every request. The preprocess_request function calls the ensure_sync function to ensure that the handlers are executed synchronously. The flow ultimately leads to the execution of the before_request handlers, which can return a non-None value to stop further request handling.\n\nSTEP-BY-STEP TRACE\n1. The Flask class (flask_repo\\src\\flask\\app.py:109-1625) calls the full_dispatch_request function (flask_repo\\src\\flask\\app.py:992-1019) to dispatch the request.\n2. The full_dispatch_request function calls the preprocess_request function (flask_repo\\src\\flask\\app.py:1366-1392) to perform request preprocessing.\n3. The preprocess_request function calls the before_request handlers registered with the app and the current blueprint (if any).\n4. The before_request function (flask_repo\\src\\flask\\sansio\\scaffold.py:460-484) registers a function to run before each request.\n5. The before_app_request function (flask_repo\\src\\flask\\sansio\\blueprints.py:614-621) registers a function to run before every request, not only those handled by the blueprint.\n6. The preprocess_request function calls the ensure_sync function (flask_repo\\src\\flask\\app.py:1065-1077) to ensure that the handlers are executed synchronously.\n\nFILES INVOLVED\n- flask_repo\\src\\flask\\app.py: This file contains the Flask class, the full_dispatch_request function, and the preprocess_request function.\n- flask_repo\\src\\flask\\sansio\\scaffold.py: This file contains the before_request function.\n- flask_repo\\src\\flask\\sansio\\blueprints.py: This file contains the before_app_request function and the record_once function.\n\nKEY RELATIONSHIPS\n- The Flask class calls the full_dispatch_request function, which calls the preprocess_request function.\n- The preprocess_request function calls the before_request handlers and the ensure_sync function.\n- The before_request function and the before_app_request function register handlers that are executed by the preprocess_request function.\n- The before_app_request function calls the record_once function to register handlers that are executed before every request.",
+    "query_type": "flow",
+    "retrieval_results": [
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\scaffold.py:before_request:460",
+        "name": "before_request",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\scaffold.py",
+        "start_line": 460,
+        "end_line": 484,
+        "content": "def before_request(self, f: T_before_request) -> T_before_request:\n        \"\"\"Register a function to run before each request.\n\n        For example, this can be used to open a database connection, or\n        to load the logged in user from the session.\n\n        .. code-block:: python\n\n            @app.before_request\n            def load_user():\n                if \"user_id\" in session:\n                    g.user = db.session.get(session[\"user_id\"])\n\n        The function will be called without any arguments. If it returns\n        a non-``None`` value, the value is handled as if it was the\n        return value from the view, and further request handling is\n        stopped.\n\n        This is available on both app and blueprint objects. When used on an app, this\n        executes before every request. When used on a blueprint, this executes before\n        every request that the blueprint handles. To register with a blueprint and\n        execute before every request, use :meth:`.Blueprint.befor",
+        "score": 0.0687458081824279,
+        "rerank_score": 4.05810022354126,
+        "final_score": 2.86129389893361
+      },
+      {
+        "id": "flask_repo\\src\\flask\\app.py:preprocess_request:1366",
+        "name": "preprocess_request",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\app.py",
+        "start_line": 1366,
+        "end_line": 1392,
+        "content": "def preprocess_request(self, ctx: AppContext) -> ft.ResponseReturnValue | None:\n        \"\"\"Called before the request is dispatched. Calls\n        :attr:`url_value_preprocessors` registered with the app and the\n        current blueprint (if any). Then calls :attr:`before_request_funcs`\n        registered with the app and the blueprint.\n\n        If any :meth:`before_request` handler returns a non-None value, the\n        value is handled as if it was the return value from the view, and\n        further request handling is stopped.\n        \"\"\"\n        req = ctx.request\n        names = (None, *reversed(req.blueprints))\n\n        for name in names:\n            if name in self.url_value_preprocessors:\n                for url_func in self.url_value_preprocessors[name]:\n                    url_func(req.endpoint, req.view_args)\n\n        for name in names:\n            if name in self.before_request_funcs:\n                for before_func in self.before_request_funcs[name]:\n                    rv = s",
+        "score": 0.046875,
+        "rerank_score": 3.4515533447265625,
+        "final_score": 2.4301498413085936
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\blueprints.py:before_app_request:614",
+        "name": "before_app_request",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\blueprints.py",
+        "start_line": 614,
+        "end_line": 621,
+        "content": "def before_app_request(self, f: T_before_request) -> T_before_request:\n        \"\"\"Like :meth:`before_request`, but before every request, not only those handled\n        by the blueprint. Equivalent to :meth:`.Flask.before_request`.\n        \"\"\"\n        self.record_once(\n            lambda s: s.app.before_request_funcs.setdefault(None, []).append(f)\n        )\n        return f",
+        "score": 0.06719367588932806,
+        "rerank_score": 0.7572722434997559,
+        "final_score": 0.5502486732166275
+      }
+    ],
+    "allowed_files": [
+      "flask_repo\\src\\flask\\app.py",
+      "flask_repo\\src\\flask\\sansio\\blueprints.py",
+      "flask_repo\\src\\flask\\sansio\\scaffold.py"
+    ],
+    "allowed_functions": [
+      "Flask",
+      "before_app_request",
+      "before_request",
+      "ensure_sync",
+      "full_dispatch_request",
+      "preprocess_request",
+      "record_once"
+    ],
+    "ground_truth": {
+      "id": 4,
+      "question": "How are before_request handlers executed?",
+      "query_type": "flow",
+      "expected_files": [
+        "flask_repo\\src\\flask\\app.py",
+        "flask_repo\\src\\flask\\sansio\\blueprints.py",
+        "flask_repo\\src\\flask\\sansio\\scaffold.py"
+      ],
+      "expected_functions": [
+        "full_dispatch_request",
+        "preprocess_request",
+        "before_request",
+        "before_app_request"
+      ],
+      "reference_answer": "The execution flow of before_request handlers begins with the Flask object, which calls the full_dispatch_request function. This function then calls the preprocess_request function, which is responsible for executing the before_request handlers. The preprocess_request function iterates over the registered before_request functions and calls them. If any of these functions return a non-None value, the execution is stopped. The before_request functions are registered using the before_request or before_app_request functions, which are available on both app and blueprint objects.",
+      "notes": ""
+    }
+  },
+  {
+    "id": 5,
+    "question": "How does teardown_appcontext work?",
+    "generated_answer": "FLOW SUMMARY\nThe execution flow begins with the `AppContext` class, which is used to manage the application context. When the context is popped, the `pop` method is called, which in turn calls `do_teardown_appcontext` to perform the necessary teardown operations. The `do_teardown_appcontext` function calls all functions decorated with `teardown_appcontext` and sends the `appcontext_tearing_down` signal. The `teardown_appcontext` function registers a function to be called when the app context is popped. The `ensure_sync` function is used to ensure that the functions are synchronous for WSGI workers.\n\nSTEP-BY-STEP TRACE\n1. The `AppContext` class is used to manage the application context, and when the context is popped, the `pop` method is called (flask_repo\\src\\flask\\ctx.py:446-504).\n2. The `pop` method calls `do_teardown_appcontext` to perform the necessary teardown operations (flask_repo\\src\\flask\\app.py:1453-1479).\n3. The `do_teardown_appcontext` function calls all functions decorated with `teardown_appcontext` (flask_repo\\src\\flask\\sansio\\app.py:827-855).\n4. The `teardown_appcontext` function registers a function to be called when the app context is popped (flask_repo\\src\\flask\\sansio\\app.py:827-855).\n5. The `ensure_sync` function is used to ensure that the functions are synchronous for WSGI workers (flask_repo\\src\\flask\\app.py:1065-1077).\n\nFILES INVOLVED\n- flask_repo\\src\\flask\\app.py: This file contains the `do_teardown_appcontext` and `ensure_sync` functions.\n- flask_repo\\src\\flask\\ctx.py: This file contains the `AppContext` class and the `pop` method.\n- flask_repo\\src\\flask\\sansio\\app.py: This file contains the `teardown_appcontext` function.\n\nKEY RELATIONSHIPS\n- `AppContext` calls `do_teardown_appcontext` when the context is popped.\n- `do_teardown_appcontext` calls all functions decorated with `teardown_appcontext`.\n- `teardown_appcontext` registers a function to be called when the app context is popped.\n- `ensure_sync` is used to ensure that the functions are synchronous for WSGI workers.",
+    "query_type": "flow",
+    "retrieval_results": [
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\app.py:teardown_appcontext:827",
+        "name": "teardown_appcontext",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\app.py",
+        "start_line": 827,
+        "end_line": 855,
+        "content": "def teardown_appcontext(self, f: T_teardown) -> T_teardown:\n        \"\"\"Registers a function to be called when the app context is popped. The\n        context is popped at the end of a request, CLI command, or manual ``with``\n        block.\n\n        .. code-block:: python\n\n            with app.app_context():\n                ...\n\n        When the ``with`` block exits (or ``ctx.pop()`` is called), the\n        teardown functions are called just before the app context is\n        made inactive.\n\n        When a teardown function was called because of an unhandled\n        exception it will be passed an error object. If an\n        :meth:`errorhandler` is registered, it will handle the exception\n        and the teardown will not receive it.\n\n        Teardown functions must avoid raising exceptions. If they\n        execute code that might fail they must surround that code with a\n        ``try``/``except`` block and log any errors.\n\n        The return values of teardown functions are ignored.\n\n    ",
+        "score": 0.07182459677419355,
+        "rerank_score": 5.967252731323242,
+        "final_score": 4.198624290958527
+      },
+      {
+        "id": "flask_repo\\src\\flask\\app.py:do_teardown_appcontext:1453",
+        "name": "do_teardown_appcontext",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\app.py",
+        "start_line": 1453,
+        "end_line": 1479,
+        "content": "def do_teardown_appcontext(\n        self, ctx: AppContext, exc: BaseException | None = None\n    ) -> None:\n        \"\"\"Called right before the application context is popped. Called by\n        :meth:`.AppContext.pop`.\n\n        This calls all functions decorated with :meth:`teardown_appcontext`.\n        Then the :data:`appcontext_tearing_down` signal is sent.\n\n        :param exc: An unhandled exception raised while the context was active.\n            Passed to each teardown function.\n\n        .. versionchanged:: 3.2\n            All callbacks are called rather than stopping on the first error.\n\n        .. versionadded:: 0.9\n        \"\"\"\n        collect_errors = _CollectErrors()\n\n        for func in reversed(self.teardown_appcontext_funcs):\n            with collect_errors:\n                self.ensure_sync(func)(exc)\n\n        with collect_errors:\n            appcontext_tearing_down.send(self, _async_wrapper=self.ensure_sync, exc=exc)\n\n        collect_errors.raise_any(\"Errors during app teardo",
+        "score": 0.04918032786885246,
+        "rerank_score": 5.407021999359131,
+        "final_score": 3.799669497912047
+      },
+      {
+        "id": "flask_repo\\src\\flask\\app.py:do_teardown_request:1420",
+        "name": "do_teardown_request",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\app.py",
+        "start_line": 1420,
+        "end_line": 1451,
+        "content": "def do_teardown_request(\n        self, ctx: AppContext, exc: BaseException | None = None\n    ) -> None:\n        \"\"\"Called after the request is dispatched and the response is finalized,\n        right before the request context is popped. Called by\n        :meth:`.AppContext.pop`.\n\n        This calls all functions decorated with :meth:`teardown_request`, and\n        :meth:`Blueprint.teardown_request` if a blueprint handled the request.\n        Finally, the :data:`request_tearing_down` signal is sent.\n\n        :param exc: An unhandled exception raised while dispatching the request.\n            Passed to each teardown function.\n\n        .. versionchanged:: 3.2\n            All callbacks are called rather than stopping on the first error.\n\n        .. versionchanged:: 0.9\n            Added the ``exc`` argument.\n        \"\"\"\n        collect_errors = _CollectErrors()\n\n        for name in chain(ctx.request.blueprints, (None,)):\n            if name in self.teardown_request_funcs:\n                f",
+        "score": 0.04,
+        "rerank_score": 4.621612071990967,
+        "final_score": 3.2471284503936766
+      },
+      {
+        "id": "flask_repo\\src\\flask\\ctx.py:AppContext:260",
+        "name": "AppContext",
+        "type": "class",
+        "file_path": "flask_repo\\src\\flask\\ctx.py",
+        "start_line": 260,
+        "end_line": 525,
+        "content": "class AppContext:\n    \"\"\"An app context contains information about an app, and about the request\n    when handling a request. A context is pushed at the beginning of each\n    request and CLI command, and popped at the end. The context is referred to\n    as a \"request context\" if it has request information, and an \"app context\"\n    if not.\n\n    Do not use this class directly. Use :meth:`.Flask.app_context` to create an\n    app context if needed during setup, and :meth:`.Flask.test_request_context`\n    to create a request context if needed during tests.\n\n    When the context is popped, it will evaluate all the teardown functions\n    registered with :meth:`~flask.Flask.teardown_request` (if handling a\n    request) then :meth:`.Flask.teardown_appcontext`.\n\n    When using the interactive debugger, the context will be restored so\n    ``request`` is still accessible. Similarly, the test client can preserve the\n    context after the request ends. However, teardown functions may already have\n  ",
+        "score": 0.047619047619047616,
+        "rerank_score": 4.463979721069336,
+        "final_score": 3.1390715190342493
+      }
+    ],
+    "allowed_files": [
+      "flask_repo\\src\\flask\\app.py",
+      "flask_repo\\src\\flask\\ctx.py",
+      "flask_repo\\src\\flask\\sansio\\app.py"
+    ],
+    "allowed_functions": [
+      "AppContext",
+      "do_teardown_appcontext",
+      "do_teardown_request",
+      "ensure_sync",
+      "pop",
+      "teardown_appcontext"
+    ],
+    "ground_truth": {
+      "id": 5,
+      "question": "How does teardown_appcontext work?",
+      "query_type": "flow",
+      "expected_files": [
+        "flask_repo\\src\\flask\\app.py",
+        "flask_repo\\src\\flask\\ctx.py",
+        "flask_repo\\src\\flask\\sansio\\app.py"
+      ],
+      "expected_functions": [
+        "AppContext",
+        "do_teardown_appcontext",
+        "ensure_sync",
+        "teardown_appcontext"
+      ],
+      "reference_answer": "The execution flow begins with the `AppContext` class, which is used to manage the application context. When the context is popped, the `pop` method is called, which in turn calls `do_teardown_appcontext` to perform the necessary teardown operations. The `do_teardown_appcontext` function calls all functions decorated with `teardown_appcontext` and sends the `appcontext_tearing_down` signal. The `teardown_appcontext` function registers a function to be called when the app context is popped. The `ensure_sync` function is used to ensure that the functions are synchronous for WSGI workers.",
+      "notes": ""
+    }
+  },
+  {
+    "id": 6,
+    "question": "Where is save_session implemented?",
+    "generated_answer": "FLOW SUMMARY\nThe execution flow begins with the SessionInterface class, which defines the basic interface for session management. The save_session method is a crucial part of this interface, and it is implemented in the sessions.py file. When the save_session method is called, it retrieves various cookie settings, such as domain, path, secure, and httponly, by calling methods like get_cookie_domain, get_cookie_path, get_cookie_secure, and get_cookie_httponly. It then checks if the session was accessed and adds a \"Vary: Cookie\" header to the response if necessary. Finally, it either sets or deletes the cookie based on the session's state.\n\nSTEP-BY-STEP TRACE\n1. The SessionInterface class defines the save_session method, which is called at the end of each request (flask_repo\\src\\flask\\sessions.py, line 10).\n2. The save_session method calls other methods like get_cookie_domain, get_cookie_path, get_cookie_secure, and get_cookie_httponly to retrieve cookie settings (flask_repo\\src\\flask\\sessions.py, lines 20-25).\n3. The save_session method checks if the session was accessed and adds a \"Vary: Cookie\" header to the response if necessary (flask_repo\\src\\flask\\sessions.py, line 30).\n4. The save_session method then checks if the session is empty and either sets or deletes the cookie accordingly (flask_repo\\src\\flask\\sessions.py, lines 35-40).\n\nFILES INVOLVED\n- flask_repo\\src\\flask\\sessions.py: This file contains the implementation of the SessionInterface class and the save_session method.\n\nKEY RELATIONSHIPS\n- SessionInterface calls save_session: The SessionInterface class defines the save_session method, which is responsible for saving the session at the end of each request.\n- save_session calls get_cookie_domain, get_cookie_path, get_cookie_secure, and get_cookie_httponly: The save_session method calls these methods to retrieve cookie settings.\n- save_session checks session state and sets or deletes cookie: The save_session method checks the session's state and either sets or deletes the cookie based on its state.",
+    "query_type": "lookup",
+    "retrieval_results": [
+      {
+        "id": "flask_repo\\src\\flask\\sessions.py:SessionInterface:100",
+        "name": "SessionInterface",
+        "type": "class",
+        "file_path": "flask_repo\\src\\flask\\sessions.py",
+        "start_line": 100,
+        "end_line": 270,
+        "content": "class SessionInterface:\n    \"\"\"The basic interface you have to implement in order to replace the\n    default session interface which uses werkzeug's securecookie\n    implementation.  The only methods you have to implement are\n    :meth:`open_session` and :meth:`save_session`, the others have\n    useful defaults which you don't need to change.\n\n    The session object returned by the :meth:`open_session` method has to\n    provide a dictionary like interface plus the properties and methods\n    from the :class:`SessionMixin`.  We recommend just subclassing a dict\n    and adding that mixin::\n\n        class Session(dict, SessionMixin):\n            pass\n\n    If :meth:`open_session` returns ``None`` Flask will call into\n    :meth:`make_null_session` to create a session that acts as replacement\n    if the session support cannot work because some requirement is not\n    fulfilled.  The default :class:`NullSession` class that is created\n    will complain that the secret key was not set.\n\n    To re",
+        "score": 0.0410958904109589,
+        "rerank_score": 3.702073335647583,
+        "final_score": 2.6037801020765956
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sessions.py:save_session:263",
+        "name": "save_session",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sessions.py",
+        "start_line": 263,
+        "end_line": 270,
+        "content": "def save_session(\n        self, app: Flask, session: SessionMixin, response: Response\n    ) -> None:\n        \"\"\"This is called at the end of each request, after generating\n        a response, before removing the request context. It is skipped\n        if :meth:`is_null_session` returns ``True``.\n        \"\"\"\n        raise NotImplementedError()",
+        "score": 0.07377049180327869,
+        "rerank_score": 2.5927982330322266,
+        "final_score": 1.837089910663542
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sessions.py:save_session:337",
+        "name": "save_session",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sessions.py",
+        "start_line": 337,
+        "end_line": 385,
+        "content": "def save_session(\n        self, app: Flask, session: SessionMixin, response: Response\n    ) -> None:\n        name = self.get_cookie_name(app)\n        domain = self.get_cookie_domain(app)\n        path = self.get_cookie_path(app)\n        secure = self.get_cookie_secure(app)\n        partitioned = self.get_cookie_partitioned(app)\n        samesite = self.get_cookie_samesite(app)\n        httponly = self.get_cookie_httponly(app)\n\n        # Add a \"Vary: Cookie\" header if the session was accessed at all.\n        if session.accessed:\n            response.vary.add(\"Cookie\")\n\n        # If the session is modified to be empty, remove the cookie.\n        # If the session is empty, return without setting the cookie.\n        if not session:\n            if session.modified:\n                response.delete_cookie(\n                    name,\n                    domain=domain,\n                    path=path,\n                    secure=secure,\n                    partitioned=partitioned,\n                    s",
+        "score": 0.07105654761904762,
+        "rerank_score": 0.3567608892917633,
+        "final_score": 0.2710495867899486
+      }
+    ],
+    "allowed_files": [
+      "flask_repo\\src\\flask\\sessions.py"
+    ],
+    "allowed_functions": [
+      "SessionInterface",
+      "get_cookie_domain",
+      "get_cookie_httponly",
+      "get_cookie_partitioned",
+      "get_cookie_path",
+      "get_cookie_samesite",
+      "get_cookie_secure",
+      "get_expiration_time",
+      "get_signing_serializer",
+      "save_session",
+      "should_set_cookie"
+    ],
+    "ground_truth": {
+      "id": 6,
+      "question": "Where is save_session implemented?",
+      "query_type": "lookup",
+      "expected_files": [
+        "flask_repo\\src\\flask\\sessions.py"
+      ],
+      "expected_functions": [
+        "save_session"
+      ],
+      "reference_answer": "The execution flow begins with the SessionInterface class, which defines the basic interface for session management. The save_session method is a crucial part of this interface, and it is implemented in the same file, flask_repo\\src\\flask\\sessions.py. This method is called at the end of each request, after generating a response, and it is responsible for saving the session data. The save_session method calls several other methods, including get_cookie_domain, get_cookie_path, get_cookie_secure, get_cookie_partitioned, get_cookie_samesite, and get_cookie_httponly, to determine the cookie settings. If the session is modified to be empty, it removes the cookie; otherwise, it sets the cookie with the determined settings.",
+      "notes": ""
+    }
+  },
+  {
+    "id": 7,
+    "question": "What breaks if register_blueprint changes?",
+    "generated_answer": "IMPACT ANALYSIS\n\nDIRECT CALLERS\nNo internal callers found. This function is called by application code.\n\nDIRECT CALLEES\nregister_blueprint calls no allowed functions.\n\nBREAKAGE RISK\nIf register_blueprint changes, the application's ability to register blueprints would be affected.\n\nAFFECTED FILES\nflask_repo\\src\\flask\\sansio\\app.py, flask_repo\\src\\flask\\sansio\\blueprints.py",
+    "query_type": "impact",
+    "retrieval_results": [
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\blueprints.py:register_blueprint:256",
+        "name": "register_blueprint",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\blueprints.py",
+        "start_line": 256,
+        "end_line": 271,
+        "content": "def register_blueprint(self, blueprint: Blueprint, **options: t.Any) -> None:\n        \"\"\"Register a :class:`~flask.Blueprint` on this blueprint. Keyword\n        arguments passed to this method will override the defaults set\n        on the blueprint.\n\n        .. versionchanged:: 2.0.1\n            The ``name`` option can be used to change the (pre-dotted)\n            name the blueprint is registered with. This allows the same\n            blueprint to be registered multiple times with unique names\n            for ``url_for``.\n\n        .. versionadded:: 2.0\n        \"\"\"\n        if blueprint is self:\n            raise ValueError(\"Cannot register a blueprint on itself\")\n        self._blueprints.append((blueprint, options))",
+        "score": 0.07182459677419355,
+        "rerank_score": 1.7720658779144287,
+        "final_score": 1.261993493572358
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\app.py:register_blueprint:570",
+        "name": "register_blueprint",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\app.py",
+        "start_line": 570,
+        "end_line": 595,
+        "content": "def register_blueprint(self, blueprint: Blueprint, **options: t.Any) -> None:\n        \"\"\"Register a :class:`~flask.Blueprint` on the application. Keyword\n        arguments passed to this method will override the defaults set on the\n        blueprint.\n\n        Calls the blueprint's :meth:`~flask.Blueprint.register` method after\n        recording the blueprint in the application's :attr:`blueprints`.\n\n        :param blueprint: The blueprint to register.\n        :param url_prefix: Blueprint routes will be prefixed with this.\n        :param subdomain: Blueprint routes will match on this subdomain.\n        :param url_defaults: Blueprint routes will use these default values for\n            view arguments.\n        :param options: Additional keyword arguments are passed to\n            :class:`~flask.blueprints.BlueprintSetupState`. They can be\n            accessed in :meth:`~flask.Blueprint.record` callbacks.\n\n        .. versionchanged:: 2.0.1\n            The ``name`` option can be used to cha",
+        "score": 0.046153846153846156,
+        "rerank_score": -0.3449849486351013,
+        "final_score": -0.22764331019841708
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\blueprints.py:_check_setup_finished:213",
+        "name": "_check_setup_finished",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\blueprints.py",
+        "start_line": 213,
+        "end_line": 221,
+        "content": "def _check_setup_finished(self, f_name: str) -> None:\n        if self._got_registered_once:\n            raise AssertionError(\n                f\"The setup method '{f_name}' can no longer be called on the blueprint\"\n                f\" '{self.name}'. It has already been registered at least once, any\"\n                \" changes will not be applied consistently.\\n\"\n                \"Make sure all imports, decorators, functions, etc. needed to set up\"\n                \" the blueprint are done before registering it.\"\n            )",
+        "score": 0.046875,
+        "rerank_score": -0.8055001497268677,
+        "final_score": -0.5497876048088074
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\blueprints.py:register:273",
+        "name": "register",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\blueprints.py",
+        "start_line": 273,
+        "end_line": 377,
+        "content": "def register(self, app: App, options: dict[str, t.Any]) -> None:\n        \"\"\"Called by :meth:`Flask.register_blueprint` to register all\n        views and callbacks registered on the blueprint with the\n        application. Creates a :class:`.BlueprintSetupState` and calls\n        each :meth:`record` callback with it.\n\n        :param app: The application this blueprint is being registered\n            with.\n        :param options: Keyword arguments forwarded from\n            :meth:`~Flask.register_blueprint`.\n\n        .. versionchanged:: 2.3\n            Nested blueprints now correctly apply subdomains.\n\n        .. versionchanged:: 2.1\n            Registering the same blueprint with the same name multiple\n            times is an error.\n\n        .. versionchanged:: 2.0.1\n            Nested blueprints are registered with their dotted name.\n            This allows different blueprints with the same name to be\n            nested at different locations.\n\n        .. versionchanged:: 2.0.1\n       ",
+        "score": 0.04918032786885246,
+        "rerank_score": -1.7187036275863647,
+        "final_score": -1.1883384409497995
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\blueprints.py:record:224",
+        "name": "record",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\blueprints.py",
+        "start_line": 224,
+        "end_line": 230,
+        "content": "def record(self, func: DeferredSetupFunction) -> None:\n        \"\"\"Registers a function that is called when the blueprint is\n        registered on the application.  This function is called with the\n        state as argument as returned by the :meth:`make_setup_state`\n        method.\n        \"\"\"\n        self.deferred_functions.append(func)",
+        "score": 0.04477611940298507,
+        "rerank_score": -2.678494453430176,
+        "final_score": -1.8615132815802273
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\blueprints.py:__init__:41",
+        "name": "__init__",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\blueprints.py",
+        "start_line": 41,
+        "end_line": 85,
+        "content": "def __init__(\n        self,\n        blueprint: Blueprint,\n        app: App,\n        options: t.Any,\n        first_registration: bool,\n    ) -> None:\n        #: a reference to the current application\n        self.app = app\n\n        #: a reference to the blueprint that created this setup state.\n        self.blueprint = blueprint\n\n        #: a dictionary with all options that were passed to the\n        #: :meth:`~flask.Flask.register_blueprint` method.\n        self.options = options\n\n        #: as blueprints can be registered multiple times with the\n        #: application and not everything wants to be registered\n        #: multiple times on it, this attribute can be used to figure\n        #: out if the blueprint was registered in the past already.\n        self.first_registration = first_registration\n\n        subdomain = self.options.get(\"subdomain\")\n        if subdomain is None:\n            subdomain = self.blueprint.subdomain\n\n        #: The subdomain that the blueprint should be active",
+        "score": 0.0410958904109589,
+        "rerank_score": -3.0298714637756348,
+        "final_score": -2.1085812575196563
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\blueprints.py:BlueprintSetupState:34",
+        "name": "BlueprintSetupState",
+        "type": "class",
+        "file_path": "flask_repo\\src\\flask\\sansio\\blueprints.py",
+        "start_line": 34,
+        "end_line": 116,
+        "content": "class BlueprintSetupState:\n    \"\"\"Temporary holder object for registering a blueprint with the\n    application.  An instance of this class is created by the\n    :meth:`~flask.Blueprint.make_setup_state` method and later passed\n    to all register callback functions.\n    \"\"\"\n\n    def __init__(\n        self,\n        blueprint: Blueprint,\n        app: App,\n        options: t.Any,\n        first_registration: bool,\n    ) -> None:\n        #: a reference to the current application\n        self.app = app\n\n        #: a reference to the blueprint that created this setup state.\n        self.blueprint = blueprint\n\n        #: a dictionary with all options that were passed to the\n        #: :meth:`~flask.Flask.register_blueprint` method.\n        self.options = options\n\n        #: as blueprints can be registered multiple times with the\n        #: application and not everything wants to be registered\n        #: multiple times on it, this attribute can be used to figure\n        #: out if the blueprint ",
+        "score": 0.045454545454545456,
+        "rerank_score": -3.1041693687438965,
+        "final_score": -2.159282194484364
+      }
+    ],
+    "allowed_files": [
+      "flask_repo\\src\\flask\\sansio\\app.py",
+      "flask_repo\\src\\flask\\sansio\\blueprints.py"
+    ],
+    "allowed_functions": [
+      "_check_setup_finished",
+      "register_blueprint"
+    ],
+    "ground_truth": {
+      "id": 7,
+      "question": "What breaks if register_blueprint changes?",
+      "query_type": "impact",
+      "expected_files": [],
+      "expected_functions": [],
+      "reference_answer": "",
+      "notes": "",
+      "skip_deterministic_eval": true
+    }
+  },
+  {
+    "id": 8,
+    "question": "How are error handlers resolved?",
+    "generated_answer": "FLOW SUMMARY\nThe error handling flow in the given codebase starts with the `handle_exception` function in `flask_repo\\src\\flask\\app.py`, which calls `finalize_request` to handle exceptions. The `finalize_request` function then calls `process_response` and `make_response` to process the response. Meanwhile, the `_find_error_handler` function in `flask_repo\\src\\flask\\sansio\\app.py` is responsible for finding error handlers, which are registered using the `errorhandler` function in `flask_repo\\src\\flask\\sansio\\scaffold.py`. The `register_error_handler` function in `flask_repo\\src\\flask\\sansio\\scaffold.py` is used to register error handlers, and it calls `_get_exc_class_and_code` to get the exception class and code. The `handle_http_exception` function in `flask_repo\\src\\flask\\app.py` handles HTTP exceptions and calls `_find_error_handler` to find an error handler.\n\nSTEP-BY-STEP TRACE\n1. The `handle_exception` function in `flask_repo\\src\\flask\\app.py` is called to handle an exception.\n2. The `handle_exception` function calls `finalize_request` to handle the exception.\n3. The `finalize_request` function calls `process_response` to process the response.\n4. The `finalize_request` function also calls `make_response` to create a response object.\n5. The `_find_error_handler` function in `flask_repo\\src\\flask\\sansio\\app.py` is called to find an error handler for the exception.\n6. The `_find_error_handler` function calls `_get_exc_class_and_code` to get the exception class and code.\n7. The `errorhandler` function in `flask_repo\\src\\flask\\sansio\\scaffold.py` is used to register an error handler.\n8. The `register_error_handler` function in `flask_repo\\src\\flask\\sansio\\scaffold.py` is called to register the error handler.\n9. The `register_error_handler` function calls `_get_exc_class_and_code` to get the exception class and code.\n10. The `handle_http_exception` function in `flask_repo\\src\\flask\\app.py` is called to handle an HTTP exception.\n11. The `handle_http_exception` function calls `_find_error_handler` to find an error handler for the HTTP exception.\n\nFILES INVOLVED\n- `flask_repo\\src\\flask\\app.py`: This file contains the `handle_exception`, `finalize_request`, `process_response`, `make_response`, and `handle_http_exception` functions.\n- `flask_repo\\src\\flask\\sansio\\app.py`: This file contains the `_find_error_handler` function.\n- `flask_repo\\src\\flask\\sansio\\scaffold.py`: This file contains the `errorhandler` and `register_error_handler` functions.\n\nKEY RELATIONSHIPS\n- `handle_exception` calls `finalize_request`.\n- `finalize_request` calls `process_response` and `make_response`.\n- `_find_error_handler` is called by `handle_http_exception` and `handle_exception`.\n- `errorhandler` calls `register_error_handler`.\n- `register_error_handler` calls `_get_exc_class_and_code`.\n- `_find_error_handler` calls `_get_exc_class_and_code`.",
+    "query_type": "flow",
+    "retrieval_results": [
+      {
+        "id": "flask_repo\\src\\flask\\app.py:finalize_request:1021",
+        "name": "finalize_request",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\app.py",
+        "start_line": 1021,
+        "end_line": 1051,
+        "content": "def finalize_request(\n        self,\n        ctx: AppContext,\n        rv: ft.ResponseReturnValue | HTTPException,\n        from_error_handler: bool = False,\n    ) -> Response:\n        \"\"\"Given the return value from a view function this finalizes\n        the request by converting it into a response and invoking the\n        postprocessing functions.  This is invoked for both normal\n        request dispatching as well as error handlers.\n\n        Because this means that it might be called as a result of a\n        failure a special safe mode is available which can be enabled\n        with the `from_error_handler` flag.  If enabled, failures in\n        response processing will be logged and otherwise ignored.\n\n        :internal:\n        \"\"\"\n        response = self.make_response(rv)\n        try:\n            response = self.process_response(ctx, response)\n            request_finished.send(\n                self, _async_wrapper=self.ensure_sync, response=response\n            )\n        except Exception:\n            if not from_error_handler:\n                raise\n            self.logger.exception(\n                \"Request finalizing failed with an error while handling an error\"\n            )\n        return response",
+        "score": 0.02112676056338028,
+        "rerank_score": -0.21369978785514832,
+        "final_score": -0.14325182332958974
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\app.py:_find_error_handler:868",
+        "name": "_find_error_handler",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\app.py",
+        "start_line": 868,
+        "end_line": 891,
+        "content": "def _find_error_handler(\n        self, e: Exception, blueprints: list[str]\n    ) -> ft.ErrorHandlerCallable | None:\n        \"\"\"Return a registered error handler for an exception in this order:\n        blueprint handler for a specific code, app handler for a specific code,\n        blueprint handler for an exception class, app handler for an exception\n        class, or ``None`` if a suitable handler is not found.\n        \"\"\"\n        exc_class, code = self._get_exc_class_and_code(type(e))\n        names = (*blueprints, None)\n\n        for c in (code, None) if code is not None else (None,):\n            for name in names:\n                handler_map = self.error_handler_spec[name][c]\n\n                if not handler_map:\n                    continue\n\n                for cls in exc_class.__mro__:\n                    handler = handler_map.get(cls)\n\n                    if handler is not None:\n                        return handler\n        return None",
+        "score": 0.04918032786885246,
+        "rerank_score": -0.998450517654419,
+        "final_score": -0.6841612639974375
+      },
+      {
+        "id": "flask_repo\\src\\flask\\app.py:handle_http_exception:830",
+        "name": "handle_http_exception",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\app.py",
+        "start_line": 830,
+        "end_line": 863,
+        "content": "def handle_http_exception(\n        self, ctx: AppContext, e: HTTPException\n    ) -> HTTPException | ft.ResponseReturnValue:\n        \"\"\"Handles an HTTP exception.  By default this will invoke the\n        registered error handlers and fall back to returning the\n        exception as response.\n\n        .. versionchanged:: 1.0.3\n            ``RoutingException``, used internally for actions such as\n             slash redirects during routing, is not passed to error\n             handlers.\n\n        .. versionchanged:: 1.0\n            Exceptions are looked up by code *and* by MRO, so\n            ``HTTPException`` subclasses can be handled with a catch-all\n            handler for the base ``HTTPException``.\n\n        .. versionadded:: 0.3\n        \"\"\"\n        # Proxy exceptions don't have error codes.  We want to always return\n        # those unchanged as errors\n        if e.code is None:\n            return e\n\n        # RoutingExceptions are used internally to trigger routing\n        # actions, such as slash redirects raising RequestRedirect. They\n        # are not raised or handled in user code.\n        if isinstance(e, RoutingException):\n            return e\n\n        handler = self._find_error_handler(e, ctx.request.blueprints)\n        if handler is None:\n            return e\n        return self.ensure_sync(handler)(e)  # type: ignore[no-any-return]",
+        "score": 0.024193548387096774,
+        "rerank_score": -1.3231513500213623,
+        "final_score": -0.9189478804988246
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\scaffold.py:errorhandler:598",
+        "name": "errorhandler",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\scaffold.py",
+        "start_line": 598,
+        "end_line": 639,
+        "content": "def errorhandler(\n        self, code_or_exception: type[Exception] | int\n    ) -> t.Callable[[T_error_handler], T_error_handler]:\n        \"\"\"Register a function to handle errors by code or exception class.\n\n        A decorator that is used to register a function given an\n        error code.  Example::\n\n            @app.errorhandler(404)\n            def page_not_found(error):\n                return 'This page does not exist', 404\n\n        You can also register handlers for arbitrary exceptions::\n\n            @app.errorhandler(DatabaseError)\n            def special_exception_handler(error):\n                return 'Database connection failed', 500\n\n        This is available on both app and blueprint objects. When used on an app, this\n        can handle errors from every request. When used on a blueprint, this can handle\n        errors from requests that the blueprint handles. To register with a blueprint\n        and affect every request, use :meth:`.Blueprint.app_errorhandler`.\n\n        .",
+        "score": 0.0703125,
+        "rerank_score": -1.3502447605133057,
+        "final_score": -0.9240775823593139
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sansio\\scaffold.py:register_error_handler:642",
+        "name": "register_error_handler",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sansio\\scaffold.py",
+        "start_line": 642,
+        "end_line": 654,
+        "content": "def register_error_handler(\n        self,\n        code_or_exception: type[Exception] | int,\n        f: ft.ErrorHandlerCallable,\n    ) -> None:\n        \"\"\"Alternative error attach function to the :meth:`errorhandler`\n        decorator that is more straightforward to use for non decorator\n        usage.\n\n        .. versionadded:: 0.7\n        \"\"\"\n        exc_class, code = self._get_exc_class_and_code(code_or_exception)\n        self.error_handler_spec[None][code][exc_class] = f",
+        "score": 0.03896103896103896,
+        "rerank_score": -1.4618409872055054,
+        "final_score": -1.011600379355542
+      }
+    ],
+    "allowed_files": [
+      "flask_repo\\src\\flask\\app.py",
+      "flask_repo\\src\\flask\\sansio\\app.py",
+      "flask_repo\\src\\flask\\sansio\\scaffold.py"
+    ],
+    "allowed_functions": [
+      "Flask",
+      "_find_error_handler",
+      "_get_exc_class_and_code",
+      "ensure_sync",
+      "finalize_request",
+      "full_dispatch_request",
+      "handle_exception",
+      "handle_http_exception",
+      "handle_user_exception",
+      "make_response",
+      "process_response"
+    ],
+    "ground_truth": {
+      "id": 8,
+      "question": "How are error handlers resolved?",
+      "query_type": "flow",
+      "expected_files": [
+        "flask_repo\\src\\flask\\app.py",
+        "flask_repo\\src\\flask\\sansio\\app.py",
+        "flask_repo\\src\\flask\\sansio\\scaffold.py"
+      ],
+      "expected_functions": [
+        "_find_error_handler",
+        "_get_exc_class_and_code",
+        "error_handler_spec",
+        "errorhandler",
+        "finalize_request",
+        "handle_exception",
+        "handle_http_exception",
+        "make_response",
+        "process_response",
+        "register_error_handler"
+      ],
+      "reference_answer": "The error handling flow in the given codebase starts with the `handle_exception` function in `flask_repo\\src\\flask\\app.py`, which calls `finalize_request` to handle exceptions. The `finalize_request` function then calls `process_response` and `make_response` to process the response. For HTTP exceptions, `handle_http_exception` is called, which invokes `_find_error_handler` in `flask_repo\\src\\flask\\sansio\\app.py` to find a registered error handler. The `_find_error_handler` function uses `_get_exc_class_and_code` in `flask_repo\\src\\flask\\sansio\\scaffold.py` to get the exception class and code. If a handler is found, it is called to handle the error. The `errorhandler` function in `flask_repo\\src\\flask\\sansio\\scaffold.py` is used to register error handlers, which are stored and retrieved by the `_find_error_handler` function.",
+      "notes": ""
+    }
+  },
+  {
+    "id": 9,
+    "question": "How does URL matching work?",
+    "generated_answer": "FLOW SUMMARY\nThe URL matching process begins with the `create_url_adapter` function in `flask_repo\\src\\flask\\app.py`, which creates a URL adapter for the given request. This function calls `bind_to_environ` in `werkzeug_repo\\src\\werkzeug\\routing\\map.py` to bind the URL adapter to the WSGI environment. The `match_request` function in `flask_repo\\src\\flask\\ctx.py` then uses the URL adapter to match the current request, calling the `match` function in `werkzeug_repo\\src\\werkzeug\\routing\\map.py` to perform the actual matching. If a match is found, the `match` function returns the matched endpoint and arguments, which are then stored in the request context. If no match is found, a `NotFound` exception is raised.\n\nSTEP-BY-STEP TRACE\n1. `create_url_adapter` in `flask_repo\\src\\flask\\app.py` creates a URL adapter for the given request and calls `bind_to_environ` in `werkzeug_repo\\src\\werkzeug\\routing\\map.py` to bind it to the WSGI environment.\n2. `bind_to_environ` in `werkzeug_repo\\src\\werkzeug\\routing\\map.py` binds the URL adapter to the WSGI environment using the `PATH_INFO` from the environment.\n3. `match_request` in `flask_repo\\src\\flask\\ctx.py` uses the URL adapter to match the current request, calling the `match` function in `werkzeug_repo\\src\\werkzeug\\routing\\map.py` to perform the actual matching.\n4. `match` in `werkzeug_repo\\src\\werkzeug\\routing\\map.py` performs the actual matching, returning the matched endpoint and arguments if a match is found, or raising a `NotFound` exception if no match is found.\n5. If a match is found, the `match` function returns the matched endpoint and arguments, which are then stored in the request context by `match_request` in `flask_repo\\src\\flask\\ctx.py`.\n\nFILES INVOLVED\n- `flask_repo\\src\\flask\\app.py`: Contains the `create_url_adapter` function, which creates a URL adapter for the given request.\n- `werkzeug_repo\\src\\werkzeug\\routing\\map.py`: Contains the `bind_to_environ` and `match` functions, which bind the URL adapter to the WSGI environment and perform the actual matching, respectively.\n- `flask_repo\\src\\flask\\ctx.py`: Contains the `match_request` function, which uses the URL adapter to match the current request.\n\nKEY RELATIONSHIPS\n- `create_url_adapter` in `flask_repo\\src\\flask\\app.py` calls `bind_to_environ` in `werkzeug_repo\\src\\werkzeug\\routing\\map.py` to bind the URL adapter to the WSGI environment.\n- `match_request` in `flask_repo\\src\\flask\\ctx.py` calls `match` in `werkzeug_repo\\src\\werkzeug\\routing\\map.py` to perform the actual matching.\n- `match` in `werkzeug_repo\\src\\werkzeug\\routing\\map.py` returns the matched endpoint and arguments, which are then stored in the request context by `match_request` in `flask_repo\\src\\flask\\ctx.py`.",
+    "query_type": "flow",
+    "retrieval_results": [
+      {
+        "id": "flask_repo\\src\\flask\\app.py:create_url_adapter:509",
+        "name": "create_url_adapter",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\app.py",
+        "start_line": 509,
+        "end_line": 560,
+        "content": "def create_url_adapter(self, request: Request | None) -> MapAdapter | None:\n        \"\"\"Creates a URL adapter for the given request. The URL adapter\n        is created at a point where the request context is not yet set\n        up so the request is passed explicitly.\n\n        .. versionchanged:: 3.1\n            If :data:`SERVER_NAME` is set, it does not restrict requests to\n            only that domain, for both ``subdomain_matching`` and\n            ``host_matching``.\n\n        .. versionchanged:: 1.0\n            :data:`SERVER_NAME` no longer implicitly enables subdomain\n            matching. Use :attr:`subdomain_matching` instead.\n\n        .. versionchanged:: 0.9\n           This can be called outside a request when the URL adapter is created\n           for an application context.\n\n        .. versionadded:: 0.6\n        \"\"\"\n        if request is not None:\n            if (trusted_hosts := self.config[\"TRUSTED_HOSTS\"]) is not None:\n                request.trusted_hosts = trusted_hosts\n\n            # Check trusted_hosts here until bind_to_environ does.\n            request.host = get_host(request.environ, request.trusted_hosts)  # pyright: ignore\n            subdomain = None\n            server_name = self.config[\"SERVER_NAME\"]\n\n            if self.url_map.host_matching:\n                # Don't pass SERVER_NAME, otherwise it's used and the actual\n                # host is ignored, which breaks host matching.\n                server_name = None\n            elif not self.subdomain_matching:\n                # Werkzeug doesn't implement subdomain matching yet. Until then,\n                # disable it by forcing the current subdomain to the default, or\n                # the empty string.\n                subdomain = self.url_map.default_subdomain or \"\"\n\n            return self.url_map.bind_to_environ(\n                request.environ, server_name=server_name, subdomain=subdomain\n            )\n\n        # Need at least SERVER_NAME to match/build outside a request.\n        if self.config[\"SERVER_NAME\"] is not None:\n            return self.url_map.bind(\n                self.config[\"SERVER_NAME\"],\n                script_name=self.config[\"APPLICATION_ROOT\"],\n                url_scheme=self.config[\"PREFERRED_URL_SCHEME\"],\n            )\n\n        return None",
+        "score": 0.023809523809523808,
+        "rerank_score": 1.779057264328003,
+        "final_score": 1.252482942172459
+      },
+      {
+        "id": "werkzeug_repo\\src\\werkzeug\\routing\\map.py:test:707",
+        "name": "test",
+        "type": "function",
+        "file_path": "werkzeug_repo\\src\\werkzeug\\routing\\map.py",
+        "start_line": 707,
+        "end_line": 722,
+        "content": "def test(self, path_info: str | None = None, method: str | None = None) -> bool:\n        \"\"\"Test if a rule would match.  Works like `match` but returns `True`\n        if the URL matches, or `False` if it does not exist.\n\n        :param path_info: the path info to use for matching.  Overrides the\n                          path info specified on binding.\n        :param method: the HTTP method used for matching.  Overrides the\n                       method specified on binding.\n        \"\"\"\n        try:\n            self.match(path_info, method)\n        except RequestRedirect:\n            pass\n        except HTTPException:\n            return False\n        return True",
+        "score": 0.07220921155347385,
+        "rerank_score": 1.4401594400405884,
+        "final_score": 1.029774371494454
+      },
+      {
+        "id": "werkzeug_repo\\src\\werkzeug\\routing\\map.py:match:528",
+        "name": "match",
+        "type": "function",
+        "file_path": "werkzeug_repo\\src\\werkzeug\\routing\\map.py",
+        "start_line": 528,
+        "end_line": 705,
+        "content": "def match(\n        self,\n        path_info: str | None = None,\n        method: str | None = None,\n        return_rule: bool = False,\n        query_args: t.Mapping[str, t.Any] | str | None = None,\n        websocket: bool | None = None,\n    ) -> tuple[t.Any | Rule, t.Mapping[str, t.Any]]:\n        \"\"\"The usage is simple: you just pass the match method the current\n        path info as well as the method (which defaults to `GET`).  The\n        following things can then happen:\n\n        - you receive a `NotFound` exception that indicates that no URL is\n          matching.  A `NotFound` exception is also a WSGI application you\n          can call to get a default page not found page (happens to be the\n          same object as `werkzeug.exceptions.NotFound`)\n\n        - you receive a `MethodNotAllowed` exception that indicates that there\n          is a match for this URL but not for the current request method.\n          This is useful for RESTful applications.\n\n        - you receive a `RequestRe",
+        "score": 0.06918032786885246,
+        "rerank_score": 0.8359402418136597,
+        "final_score": 0.6059122676302175
+      },
+      {
+        "id": "werkzeug_repo\\src\\werkzeug\\routing\\map.py:build:869",
+        "name": "build",
+        "type": "function",
+        "file_path": "werkzeug_repo\\src\\werkzeug\\routing\\map.py",
+        "start_line": 869,
+        "end_line": 974,
+        "content": "def build(\n        self,\n        endpoint: t.Any,\n        values: t.Mapping[str, t.Any] | None = None,\n        method: str | None = None,\n        force_external: bool = False,\n        append_unknown: bool = True,\n        url_scheme: str | None = None,\n    ) -> str:\n        \"\"\"Build a URL by filling in any variable slots in the endpoint's rule\n        with the provided values.\n\n        This produces relative URLs (path only, no host) by default, which is\n        appropriate for most use cases. When using subdomain or host matching,\n        the URL will be absolute if the endpoint is not on the same host as the\n        current request. If you need an absolute URL no matter what, such as\n        when adding a link to an email, pass ``force_external=True``.\n\n        Characters that are not allowed directly in URLs will be percent-encoded\n        using UTF-8.\n\n        Additional values that don't match any rule parts are added to the query\n        (``?key=value``) part of the URL.\n\n        ",
+        "score": 0.06628787878787878,
+        "rerank_score": 0.40866151452064514,
+        "final_score": 0.30594942380081525
+      },
+      {
+        "id": "flask_repo\\src\\flask\\ctx.py:match_request:405",
+        "name": "match_request",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\ctx.py",
+        "start_line": 405,
+        "end_line": 414,
+        "content": "def match_request(self) -> None:\n        \"\"\"Apply routing to the current request, storing either the matched\n        endpoint and args, or a routing exception.\n        \"\"\"\n        try:\n            result = self.url_adapter.match(return_rule=True)  # type: ignore[union-attr]\n        except HTTPException as e:\n            self._request.routing_exception = e  # type: ignore[union-attr]\n        else:\n            self._request.url_rule, self._request.view_args = result  # type: ignore[union-attr]",
+        "score": 0.04054054054054054,
+        "rerank_score": -0.030542977154254913,
+        "final_score": -0.009217921845816275
+      },
+      {
+        "id": "werkzeug_repo\\src\\werkzeug\\routing\\map.py:MapAdapter:418",
+        "name": "MapAdapter",
+        "type": "class",
+        "file_path": "werkzeug_repo\\src\\werkzeug\\routing\\map.py",
+        "start_line": 418,
+        "end_line": 974,
+        "content": "class MapAdapter:\n    \"\"\"Returned by :meth:`Map.bind` or :meth:`Map.bind_to_environ` and does\n    the URL matching and building based on runtime information.\n    \"\"\"\n\n    def __init__(\n        self,\n        map: Map,\n        server_name: str,\n        script_name: str,\n        subdomain: str | None,\n        url_scheme: str,\n        path_info: str,\n        default_method: str,\n        query_args: t.Mapping[str, t.Any] | str | None = None,\n    ):\n        self.map = map\n        self.server_name = server_name\n\n        if not script_name.endswith(\"/\"):\n            script_name += \"/\"\n\n        self.script_name = script_name\n        self.subdomain = subdomain or \"\"\n        self.url_scheme = url_scheme\n        self.path_info = path_info\n        self.default_method = default_method\n        self.query_args = query_args\n        self.websocket = self.url_scheme in {\"ws\", \"wss\"}\n\n    def dispatch(\n        self,\n        view_func: t.Callable[[str, t.Mapping[str, t.Any]], WSGIApplication],\n        path_info: str | None = None,\n        method: str | None = None,\n        catch_http_exceptions: bool = False,\n    ) -> WSGIApplication:\n        \"\"\"Does the complete dispatching process.  `view_func` is called with\n        the endpoint and a dict with the values for the view.  It should\n        look up the view function, call it, and return a response object\n        or WSGI application.  http exceptions are not caught by default\n        so that applications can display nicer error messages by just\n        catching them by hand.  If you want to stick with the default\n        error messages you can pass it ``catch_http_exceptions=True`` and\n        it will catch the http exceptions.\n\n        Here a small example for the dispatch usage::\n\n            from werkzeug.wrappers import Request, Response\n            from werkzeug.wsgi import responder\n            from werkzeug.routing import Map, Rule\n\n            def on_index(request):\n                return Response('Hello from the index')\n\n            url_map = Map([Rule('/', endpoint='index')])\n            views = {'index': on_index}\n\n            @responder\n            def application(environ, start_response):\n                request = Request(environ)\n                urls = url_map.bind_to_environ(environ)\n                return urls.dispatch(lambda e, v: views[e](request, **v),\n                                     catch_http_exceptions=True)\n\n        Keep in mind that this method might return exception objects, too, so\n        use :class:`Response.force_type` to get a response object.\n\n        :param view_func: a function that is called with the endpoint as\n                          first argument and the value dict as second.  Has\n                          to dispatch to the actual view function with this\n                          information.  (see above)\n        :param path_info: the path info to use for matching.  Overrides the\n                          path info specified on binding.\n        :param method: the HTTP method used for matching.  Overrides the\n                       method specified on binding.\n        :param catch_http_exceptions: set to `True` to catch any of the\n                                      werkzeug :class:`HTTPException`\\\\s.\n        \"\"\"\n        try:\n            try:\n                endpoint, args = self.match(path_info, method)\n            except RequestRedirect as e:\n                return e\n            return view_func(endpoint, args)\n        except HTTPException as e:\n            if catch_http_exceptions:\n                return e\n            raise\n\n    @t.overload\n    def match(\n        self,\n        path_info: str | None = None,\n        method: str | None = None,\n        return_rule: t.Literal[False] = False,\n        query_args: t.Mapping[str, t.Any] | str | None = None,\n        websocket: bool | None = None,\n    ) -> tuple[t.Any, t.Mapping[str, t.Any]]: ...\n\n    @t.overload\n    def match(\n        self,\n        path_info: str | None = None,\n        method: str | None = None,\n        return_rule: t.Literal[True] = True,\n        query_args: t.Mapping[str, t.Any] | str | None = None,\n        websocket: bool | None = None,\n    ) -> tuple[Rule, t.Mapping[str, t.Any]]: ...\n\n    def match(\n        self,\n        path_info: str | None = None,\n        method: str | None = None,\n        return_rule: bool = False,\n        query_args: t.Mapping[str, t.Any] | str | None = None,\n        websocket: bool | None = None,\n    ) -> tuple[t.Any | Rule, t.Mapping[str, t.Any]]:\n        \"\"\"The usage is simple: you just pass the match method the current\n        path info as well as the method (which defaults to `GET`).  The\n        following things can then happen:\n\n        - you receive a `NotFound` exception that indicates that no URL is\n          matching.  A `NotFound` exception is also a WSGI application you\n          can call to get a default page not found page (happens to be the\n          same object as `werkzeug.exceptions.NotFound`)\n\n        - you receive a `MethodNotAllowed` exception that indicates that there\n          is a match for this URL but not for the current request method.\n          This is useful for RESTful applications.\n\n        - you receive a `RequestRedirect` exception with a `new_url`\n          attribute.  This exception is used to notify you about a request\n          Werkzeug requests from your WSGI application.  This is for example the\n          case if you request ``/foo`` although the correct URL is ``/foo/``\n          You can use the `RequestRedirect` instance as response-like object\n          similar to all other subclasses of `HTTPException`.\n\n        - you receive a ``WebsocketMismatch`` exception if the only\n          match is a WebSocket rule but the bind is an HTTP request, or\n          if the match is an HTTP rule but the bind is a WebSocket\n          request.\n\n        - you get a tuple in the form ``(endpoint, arguments)`` if there is\n          a match (unless `return_rule` is True, in which case you get a tuple\n          in the form ``(rule, arguments)``)\n\n        If the path info is not passed to the match method the default path\n        info of the map is used (defaults to the root URL if not defined\n        explicitly).\n\n        All of the exceptions raised are subclasses of `HTTPException` so they\n        can be used as WSGI responses. They will all render generic error or\n        redirect pages.\n\n        Here is a small example for matching:\n\n        >>> m = Map([\n        ...     Rule('/', endpoint='index'),\n        ...     Rule('/downloads/', endpoint='downloads/index'),\n        ...     Rule('/downloads/<int:id>', endpoint='downloads/show')\n        ... ])\n        >>> urls = m.bind(\"example.com\", \"/\")\n        >>> urls.match(\"/\", \"GET\")\n        ('index', {})\n        >>> urls.match(\"/downloads/42\")\n        ('downloads/show', {'id': 42})\n\n        And here is what happens on redirect and missing URLs:\n\n        >>> urls.match(\"/downloads\")\n        Traceback (most recent call last):\n          ...\n        RequestRedirect: http://example.com/downloads/\n        >>> urls.match(\"/missing\")\n        Traceback (most recent call last):\n          ...\n        NotFound: 404 Not Found\n\n        :param path_info: the path info to use for matching.  Overrides the\n                          path info specified on binding.\n        :param method: the HTTP method used for matching.  Overrides the\n                       method specified on binding.\n        :param return_rule: return the rule that matched instead of just the\n                            endpoint (defaults to `False`).\n        :param query_args: optional query arguments that are used for\n                           automatic redirects as string or dictionary.  It's\n                           currently not possible to use the query arguments\n                           for URL matching.\n        :param websocket: Match WebSocket instead of HTTP requests. A\n            websocket request has a ``ws`` or ``wss``\n            :attr:`url_scheme`. This overrides that detection.\n\n        .. versionadded:: 1.0\n            Added ``websocket``.\n\n        .. versionchanged:: 0.8\n            ``query_args`` can be a string.\n\n        .. versionadded:: 0.7\n            Added ``query_args``.\n\n        .. versionadded:: 0.6\n            Added ``return_rule``.\n        \"\"\"\n        self.map.update()\n\n        if path_info is None:\n            path_info = self.path_info\n\n        if query_args is None:\n            query_args = self.query_args or {}\n\n        method = (method or self.default_method).upper()\n\n        if websocket is None:\n            websocket = self.websocket\n\n        if self.map.subdomain_matching:\n            domain_part = self.subdomain\n        elif self.map.host_matching:\n            domain_part = self.server_name\n        else:\n            domain_part = \"\"\n\n        path_part = f\"/{path_info.lstrip('/')}\" if path_info else \"\"\n\n        try:\n            result = self.map._matcher.match(domain_part, path_part, method, websocket)\n        except RequestPath as e:\n            # safe = https://url.spec.whatwg.org/#url-path-segment-string\n            new_path = quote(e.path_info, safe=\"!$&'()*+,/:;=@\")\n            raise RequestRedirect(\n                self.make_redirect_url(new_path, query_args)\n            ) from None\n        except RequestAliasRedirect as e:\n            raise RequestRedirect(\n                self.make_alias_redirect_url(\n                    f\"{domain_part}|{path_part}\",\n                    e.endpoint,\n                    e.matched_values,\n                    method,\n                    query_args,\n                )\n            ) from None\n        except NoMatch as e:\n            if e.have_match_for:\n                raise MethodNotAllowed(valid_methods=list(e.have_match_for)) from None\n\n            if e.websocket_mismatch:\n                raise WebsocketMismatch() from None\n\n            raise NotFound() from None\n        else:\n            rule, rv = result\n\n            if self.map.redirect_defaults:\n                redirect_url = self.get_default_redirect(rule, method, rv, query_args)\n                if redirect_url is not None:\n                    raise RequestRedirect(redirect_url)\n\n            if rule.redirect_to is not None:\n                if isinstance(rule.redirect_to, str):\n\n                    def _handle_match(match: t.Match[str]) -> str:\n                        value = rv[match.group(1)]\n                        return rule._converters[match.group(1)].to_url(value)\n\n                    redirect_url = _simple_rule_re.sub(_handle_match, rule.redirect_to)\n                else:\n                    redirect_url = rule.redirect_to(self, **rv)\n\n                if self.subdomain:\n                    netloc = f\"{self.subdomain}.{self.server_name}\"\n                else:\n                    netloc = self.server_name\n\n                raise RequestRedirect(\n                    urljoin(\n                        f\"{self.url_scheme or 'http'}://{netloc}{self.script_name}\",\n                        redirect_url,\n                    )\n                )\n\n            if return_rule:\n                return rule, rv\n            else:\n                return rule.endpoint, rv\n\n    def test(self, path_info: str | None = None, method: str | None = None) -> bool:\n        \"\"\"Test if a rule would match.  Works like `match` but returns `True`\n        if the URL matches, or `False` if it does not exist.\n\n        :param path_info: the path info to use for matching.  Overrides the\n                          path info specified on binding.\n        :param method: the HTTP method used for matching.  Overrides the\n                       method specified on binding.\n        \"\"\"\n        try:\n            self.match(path_info, method)\n        except RequestRedirect:\n            pass\n        except HTTPException:\n            return False\n        return True\n\n    def allowed_methods(self, path_info: str | None = None) -> t.Iterable[str]:\n        \"\"\"Returns the valid methods that match for a given path.\n\n        .. versionadded:: 0.7\n        \"\"\"\n        try:\n            self.match(path_info, method=\"--\")\n        except MethodNotAllowed as e:\n            return e.valid_methods  # type: ignore\n        except HTTPException:\n            pass\n        return []\n\n    def get_host(self, domain_part: str | None) -> str:\n        \"\"\"Figures out the full host name for the given domain part.  The\n        domain part is a subdomain in case host matching is disabled or\n        a full host name.\n        \"\"\"\n        if self.map.host_matching:\n            if domain_part is None:\n                return self.server_name\n\n            return domain_part\n\n        if domain_part is None:\n            subdomain = self.subdomain\n        else:\n            subdomain = domain_part\n\n        if subdomain:\n            return f\"{subdomain}.{self.server_name}\"\n        else:\n            return self.server_name\n\n    def get_default_redirect(\n        self,\n        rule: Rule,\n        method: str,\n        values: t.MutableMapping[str, t.Any],\n        query_args: t.Mapping[str, t.Any] | str,\n    ) -> str | None:\n        \"\"\"A helper that returns the URL to redirect to if it finds one.\n        This is used for default redirecting only.\n\n        :internal:\n        \"\"\"\n        assert self.map.redirect_defaults\n        for r in self.map._rules_by_endpoint[rule.endpoint]:\n            # every rule that comes after this one, including ourself\n            # has a lower priority for the defaults.  We order the ones\n            # with the highest priority up for building.\n            if r is rule:\n                break\n            if r.provides_defaults_for(rule) and r.suitable_for(values, method):\n                values.update(r.defaults)  # type: ignore\n                domain_part, path = r.build(values)  # type: ignore\n                return self.make_redirect_url(path, query_args, domain_part=domain_part)\n        return None\n\n    def encode_query_args(self, query_args: t.Mapping[str, t.Any] | str) -> str:\n        if not isinstance(query_args, str):\n            return _urlencode(query_args)\n        return query_args\n\n    def make_redirect_url(\n        self,\n        path_info: str,\n        query_args: t.Mapping[str, t.Any] | str | None = None,\n        domain_part: str | None = None,\n    ) -> str:\n        \"\"\"Creates a redirect URL.\n\n        :internal:\n        \"\"\"\n        if query_args is None:\n            query_args = self.query_args\n\n        if query_args:\n            query_str = self.encode_query_args(query_args)\n        else:\n            query_str = None\n\n        scheme = self.url_scheme or \"http\"\n        host = self.get_host(domain_part)\n        path = \"/\".join((self.script_name.strip(\"/\"), path_info.lstrip(\"/\")))\n        return urlunsplit((scheme, host, path, query_str, None))\n\n    def make_alias_redirect_url(\n        self,\n        path: str,\n        endpoint: t.Any,\n        values: t.Mapping[str, t.Any],\n        method: str,\n        query_args: t.Mapping[str, t.Any] | str,\n    ) -> str:\n        \"\"\"Internally called to make an alias redirect URL.\"\"\"\n        url = self.build(\n            endpoint, values, method, append_unknown=False, force_external=True\n        )\n        if query_args:\n            url += f\"?{self.encode_query_args(query_args)}\"\n        assert url != path, \"detected invalid alias setting. No canonical URL found\"\n        return url\n\n    def _partial_build(\n        self,\n        endpoint: t.Any,\n        values: t.Mapping[str, t.Any],\n        method: str | None,\n        append_unknown: bool,\n    ) -> tuple[str, str, bool] | None:\n        \"\"\"Helper for :meth:`build`.  Returns subdomain and path for the\n        rule that accepts this endpoint, values and method.\n\n        :internal:\n        \"\"\"\n        # in case the method is none, try with the default method first\n        if method is None:\n            rv = self._partial_build(\n                endpoint, values, self.default_method, append_unknown\n            )\n            if rv is not None:\n                return rv\n\n        # Default method did not match or a specific method is passed.\n        # Check all for first match with matching host. If no matching\n        # host is found, go with first result.\n        first_match = None\n\n        for rule in self.map._rules_by_endpoint.get(endpoint, ()):\n            if rule.suitable_for(values, method):\n                build_rv = rule.build(values, append_unknown)\n\n                if build_rv is not None:\n                    rv = (build_rv[0], build_rv[1], rule.websocket)\n                    if self.map.host_matching:\n                        if rv[0] == self.server_name:\n                            return rv\n                        elif first_match is None:\n                            first_match = rv\n                    else:\n                        return rv\n\n        return first_match\n\n    def build(\n        self,\n        endpoint: t.Any,\n        values: t.Mapping[str, t.Any] | None = None,\n        method: str | None = None,\n        force_external: bool = False,\n        append_unknown: bool = True,\n        url_scheme: str | None = None,\n    ) -> str:\n        \"\"\"Build a URL by filling in any variable slots in the endpoint's rule\n        with the provided values.\n\n        This produces relative URLs (path only, no host) by default, which is\n        appropriate for most use cases. When using subdomain or host matching,\n        the URL will be absolute if the endpoint is not on the same host as the\n        current request. If you need an absolute URL no matter what, such as\n        when adding a link to an email, pass ``force_external=True``.\n\n        Characters that are not allowed directly in URLs will be percent-encoded\n        using UTF-8.\n\n        Additional values that don't match any rule parts are added to the query\n        (``?key=value``) part of the URL.\n\n        If a rule is not found, an :exc:`.BuildError` is raised. Converters may\n        also raise exceptions when preparing a value.\n\n        Unlike matching, building does not perform comprehensive validation of\n        the values, it's assumed that they are trusted and correct. It's also\n        possible to build a URL for one endpoint that will be matched by\n        another, or will not match. This is very unlikely to happen or to matter\n        in most applications, especially with testing. If you need a\n        stronger guarantee, you can use a helper to verify that\n        ``match(build(endpoint)) == endpoint``.\n\n        :param endpoint: The endpoint for the rule to build.\n        :param values: Values for the variable parts of the rule, which will be\n            converted using the part's converter's\n            :meth:`~.BaseConverter.to_url` method. Keys that don't match\n            variable parts will be converted to a query string unless\n            ``append_unknown`` is disabled.\n        :param method: Further match the rule to build by this HTTP method, for\n            when there are multiple rules for the same endpoint that vary based\n            on method.\n        :param force_external: Always produce an absolute URL, for external use.\n            If ``scheme`` is not set, this produces a protocol-relative URL.\n        :param append_unknown: Convert values that don't match any rule parts\n            to a query string. Disable to ignore such values.\n        :param url_scheme: Scheme to use for absolute URLs. Defaults to\n            :attr:`url_scheme`.\n\n        .. versionchanged:: 2.0\n            Added the ``url_scheme`` parameter.\n\n        .. versionadded:: 0.6\n           Added the ``append_unknown`` parameter.\n        \"\"\"\n        self.map.update()\n\n        if values:\n            if isinstance(values, MultiDict):\n                values = {\n                    k: (v[0] if len(v) == 1 else v)\n                    for k, v in dict.items(values)\n                    if len(v) != 0\n                }\n            else:  # plain dict\n                values = {k: v for k, v in values.items() if v is not None}\n        else:\n            values = {}\n\n        rv = self._partial_build(endpoint, values, method, append_unknown)\n        if rv is None:\n            raise BuildError(endpoint, values, method, self)\n\n        domain_part, path, websocket = rv\n        host = self.get_host(domain_part)\n\n        if url_scheme is None:\n            url_scheme = self.url_scheme\n\n        # Always build WebSocket routes with the scheme (browsers\n        # require full URLs). If bound to a WebSocket, ensure that HTTP\n        # routes are built with an HTTP scheme.\n        secure = url_scheme in {\"https\", \"wss\"}\n\n        if websocket:\n            force_external = True\n            url_scheme = \"wss\" if secure else \"ws\"\n        elif url_scheme:\n            url_scheme = \"https\" if secure else \"http\"\n\n        # Return a plain path if neither host or subdomain matching is enabled,\n        # or if they are enabled and the current host matches.\n        if (\n            not force_external\n            and (self.map.subdomain_matching or self.map.host_matching)\n            and (\n                (self.map.subdomain_matching and domain_part == self.subdomain)\n                or (self.map.host_matching and host == self.server_name)\n            )\n        ):\n            return f\"{self.script_name.rstrip('/')}/{path.lstrip('/')}\"\n\n        scheme = f\"{url_scheme}:\" if url_scheme else \"\"\n        return f\"{scheme}//{host}{self.script_name[:-1]}/{path.lstrip('/')}\"",
+        "score": 0.022388059701492536,
+        "rerank_score": -0.25271183252334595,
+        "final_score": -0.1701818648558944
+      },
+      {
+        "id": "werkzeug_repo\\src\\werkzeug\\routing\\map.py:bind:193",
+        "name": "bind",
+        "type": "function",
+        "file_path": "werkzeug_repo\\src\\werkzeug\\routing\\map.py",
+        "start_line": 193,
+        "end_line": 269,
+        "content": "def bind(\n        self,\n        server_name: str,\n        script_name: str | None = None,\n        subdomain: str | None = None,\n        url_scheme: str = \"http\",\n        default_method: str = \"GET\",\n        path_info: str | None = None,\n        query_args: t.Mapping[str, t.Any] | str | None = None,\n    ) -> MapAdapter:\n        \"\"\"Create a :class:`MapAdapter` to match and build URLs based on the\n        given request information. Typically, you should call\n        :meth:`bind_to_environ` instead to extract the information from the WSGI\n        environ for the current request.\n\n        :param url_scheme: The protocol of the request. Used to match HTTP vs\n            WebSocket rules, and when building external URLs.\n        :param subdomain: The subdomain part of ``server_name``, used when\n            ``subdomain_matching`` is enabled. If not given, uses\n            :attr:`default_subdomain`, which default to empty. Must not be\n            passed if :attr:``host_matching`` is enabled.\n   ",
+        "score": 0.046875,
+        "rerank_score": -0.6023272275924683,
+        "final_score": -0.4075665593147278
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sessions.py:open_session:249",
+        "name": "open_session",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sessions.py",
+        "start_line": 249,
+        "end_line": 261,
+        "content": "def open_session(self, app: Flask, request: Request) -> SessionMixin | None:\n        \"\"\"This is called at the beginning of each request, after\n        pushing the request context, before matching the URL.\n\n        This must return an object which implements a dictionary-like\n        interface as well as the :class:`SessionMixin` interface.\n\n        This will return ``None`` to indicate that loading failed in\n        some way that is not immediately an error. The request\n        context will fall back to using :meth:`make_null_session`\n        in this case.\n        \"\"\"\n        raise NotImplementedError()",
+        "score": 0.019736842105263157,
+        "rerank_score": -1.216166377067566,
+        "final_score": -0.8453954113157172
+      }
+    ],
+    "allowed_files": [
+      "flask_repo\\src\\flask\\app.py",
+      "flask_repo\\src\\flask\\ctx.py",
+      "werkzeug_repo\\src\\werkzeug\\exceptions.py",
+      "werkzeug_repo\\src\\werkzeug\\routing\\exceptions.py",
+      "werkzeug_repo\\src\\werkzeug\\routing\\map.py"
+    ],
+    "allowed_functions": [
+      "AppContext",
+      "Flask",
+      "MethodNotAllowed",
+      "NotFound",
+      "RequestRedirect",
+      "WebsocketMismatch",
+      "__init__",
+      "allowed_methods",
+      "bind_to_environ",
+      "create_url_adapter",
+      "dispatch",
+      "get_default_redirect",
+      "make_alias_redirect_url",
+      "make_redirect_url",
+      "match",
+      "test",
+      "url_for"
+    ],
+    "ground_truth": {
+      "id": 9,
+      "question": "How does URL matching work?",
+      "query_type": "flow",
+      "expected_files": [
+        "flask_repo\\src\\flask\\app.py",
+        "flask_repo\\src\\flask\\ctx.py",
+        "werkzeug_repo\\src\\werkzeug\\routing\\map.py"
+      ],
+      "expected_functions": [
+        "bind_to_environ",
+        "create_url_adapter",
+        "make_redirect_url",
+        "match",
+        "match_request"
+      ],
+      "reference_answer": "The URL matching process begins with the `create_url_adapter` function in `flask_repo\\src\\flask\\app.py`, which creates a URL adapter for the given request. This function calls `bind_to_environ` in `werkzeug_repo\\src\\werkzeug\\routing\\map.py` to bind the URL adapter to the WSGI environment. The `match_request` function in `flask_repo\\src\\flask\\ctx.py` then uses the URL adapter to match the current request, calling the `match` function in `werkzeug_repo\\src\\werkzeug\\routing\\map.py`. The `match` function attempts to find a matching URL rule and returns the result, which may include a redirect or an exception. The `match_request` function handles the result, storing either the matched endpoint and args or a routing exception.",
+      "notes": ""
+    }
+  },
+  {
+    "id": 10,
+    "question": "How are sessions saved?",
+    "generated_answer": "FLOW SUMMARY\nThe execution flow for saving sessions begins with the `process_response` function in `flask_repo\\src\\flask\\app.py`, which calls `is_null_session` to check if the session is null. If the session is not null, `save_session` is called from `flask_repo\\src\\flask\\sessions.py` to save the session. The `save_session` function then calls other functions like `get_signing_serializer` and `get_cookie_httponly` to configure the session cookie. The flow also involves the `session_transaction` function from `flask_repo\\src\\flask\\testing.py`, which is used to modify the session in a test context.\n\nSTEP-BY-STEP TRACE\n1. The `process_response` function in `flask_repo\\src\\flask\\app.py` is called at the end of each request to modify the response object before it's sent to the WSGI server.\n2. `process_response` calls `is_null_session` in `flask_repo\\src\\flask\\sessions.py` to check if the session is null.\n3. If the session is not null, `save_session` is called from `flask_repo\\src\\flask\\sessions.py` to save the session.\n4. `save_session` calls `get_signing_serializer` and `get_cookie_httponly` to configure the session cookie.\n5. In a test context, `session_transaction` from `flask_repo\\src\\flask\\testing.py` is used to modify the session.\n\nFILES INVOLVED\n- `flask_repo\\src\\flask\\app.py`: Contains the `process_response` function and the `Flask` class.\n- `flask_repo\\src\\flask\\sessions.py`: Contains the `save_session`, `is_null_session`, `get_signing_serializer`, and `get_cookie_httponly` functions.\n- `flask_repo\\src\\flask\\testing.py`: Contains the `session_transaction` function.\n\nKEY RELATIONSHIPS\n- `process_response` calls `is_null_session` to check if the session is null.\n- `save_session` calls `get_signing_serializer` and `get_cookie_httponly` to configure the session cookie.\n- `session_transaction` is used to modify the session in a test context, and it involves the `save_session` function indirectly through the test request context.",
+    "query_type": "flow",
+    "retrieval_results": [
+      {
+        "id": "flask_repo\\src\\flask\\sessions.py:save_session:263",
+        "name": "save_session",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sessions.py",
+        "start_line": 263,
+        "end_line": 270,
+        "content": "def save_session(\n        self, app: Flask, session: SessionMixin, response: Response\n    ) -> None:\n        \"\"\"This is called at the end of each request, after generating\n        a response, before removing the request context. It is skipped\n        if :meth:`is_null_session` returns ``True``.\n        \"\"\"\n        raise NotImplementedError()",
+        "score": 0.04918032786885246,
+        "rerank_score": 4.177024841308594,
+        "final_score": 2.938671487276671
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sessions.py:is_null_session:162",
+        "name": "is_null_session",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sessions.py",
+        "start_line": 162,
+        "end_line": 169,
+        "content": "def is_null_session(self, obj: object) -> bool:\n        \"\"\"Checks if a given object is a null session.  Null sessions are\n        not asked to be saved.\n\n        This checks if the object is an instance of :attr:`null_session_class`\n        by default.\n        \"\"\"\n        return isinstance(obj, self.null_session_class)",
+        "score": 0.06870781099324975,
+        "rerank_score": 3.1145882606506348,
+        "final_score": 2.200824125753419
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sessions.py:save_session:337",
+        "name": "save_session",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\sessions.py",
+        "start_line": 337,
+        "end_line": 385,
+        "content": "def save_session(\n        self, app: Flask, session: SessionMixin, response: Response\n    ) -> None:\n        name = self.get_cookie_name(app)\n        domain = self.get_cookie_domain(app)\n        path = self.get_cookie_path(app)\n        secure = self.get_cookie_secure(app)\n        partitioned = self.get_cookie_partitioned(app)\n        samesite = self.get_cookie_samesite(app)\n        httponly = self.get_cookie_httponly(app)\n\n        # Add a \"Vary: Cookie\" header if the session was accessed at all.\n        if session.accessed:\n            response.vary.add(\"Cookie\")\n\n        # If the session is modified to be empty, remove the cookie.\n        # If the session is empty, return without setting the cookie.\n        if not session:\n            if session.modified:\n                response.delete_cookie(\n                    name,\n                    domain=domain,\n                    path=path,\n                    secure=secure,\n                    partitioned=partitioned,\n                    s",
+        "score": 0.04838709677419355,
+        "rerank_score": 3.0036678314208984,
+        "final_score": 2.117083611026887
+      },
+      {
+        "id": "flask_repo\\src\\flask\\sessions.py:SessionInterface:100",
+        "name": "SessionInterface",
+        "type": "class",
+        "file_path": "flask_repo\\src\\flask\\sessions.py",
+        "start_line": 100,
+        "end_line": 270,
+        "content": "class SessionInterface:\n    \"\"\"The basic interface you have to implement in order to replace the\n    default session interface which uses werkzeug's securecookie\n    implementation.  The only methods you have to implement are\n    :meth:`open_session` and :meth:`save_session`, the others have\n    useful defaults which you don't need to change.\n\n    The session object returned by the :meth:`open_session` method has to\n    provide a dictionary like interface plus the properties and methods\n    from the :class:`SessionMixin`.  We recommend just subclassing a dict\n    and adding that mixin::\n\n        class Session(dict, SessionMixin):\n            pass\n\n    If :meth:`open_session` returns ``None`` Flask will call into\n    :meth:`make_null_session` to create a session that acts as replacement\n    if the session support cannot work because some requirement is not\n    fulfilled.  The default :class:`NullSession` class that is created\n    will complain that the secret key was not set.\n\n    To re",
+        "score": 0.061899038461538464,
+        "rerank_score": 1.8430206775665283,
+        "final_score": 1.3086841858350313
+      },
+      {
+        "id": "flask_repo\\src\\flask\\testing.py:session_transaction:136",
+        "name": "session_transaction",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\testing.py",
+        "start_line": 136,
+        "end_line": 183,
+        "content": "def session_transaction(\n        self, *args: t.Any, **kwargs: t.Any\n    ) -> t.Iterator[SessionMixin]:\n        \"\"\"When used in combination with a ``with`` statement this opens a\n        session transaction.  This can be used to modify the session that\n        the test client uses.  Once the ``with`` block is left the session is\n        stored back.\n\n        ::\n\n            with client.session_transaction() as session:\n                session['value'] = 42\n\n        Internally this is implemented by going through a temporary test\n        request context and since session handling could depend on\n        request variables this function accepts the same arguments as\n        :meth:`~flask.Flask.test_request_context` which are directly\n        passed through.\n        \"\"\"\n        if self._cookies is None:\n            raise TypeError(\n                \"Cookies are disabled. Create a client with 'use_cookies=True'.\"\n            )\n\n        app = self.application\n        ctx = app.test_request_co",
+        "score": 0.04,
+        "rerank_score": -2.4818811416625977,
+        "final_score": -1.7253167991638183
+      },
+      {
+        "id": "flask_repo\\src\\flask\\ctx.py:session:396",
+        "name": "session",
+        "type": "function",
+        "file_path": "flask_repo\\src\\flask\\ctx.py",
+        "start_line": 396,
+        "end_line": 403,
+        "content": "def session(self) -> SessionMixin:\n        \"\"\"The session object associated with this context. Accessed through\n        :data:`.session`. Only available in request contexts, otherwise raises\n        :exc:`RuntimeError`. Accessing this sets :attr:`.SessionMixin.accessed`.\n        \"\"\"\n        session = self._get_session()\n        session.accessed = True\n        return session",
+        "score": 0.03896103896103896,
+        "rerank_score": -2.5403316020965576,
+        "final_score": -1.7665438097792785
+      }
+    ],
+    "allowed_files": [
+      "flask_repo\\src\\flask\\app.py",
+      "flask_repo\\src\\flask\\sessions.py",
+      "flask_repo\\src\\flask\\testing.py"
+    ],
+    "allowed_functions": [
+      "Flask",
+      "FlaskClient",
+      "get_cookie_domain",
+      "get_cookie_httponly",
+      "get_cookie_partitioned",
+      "get_cookie_path",
+      "get_cookie_samesite",
+      "get_cookie_secure",
+      "get_expiration_time",
+      "get_signing_serializer",
+      "is_null_session",
+      "process_response",
+      "save_session",
+      "session_transaction",
+      "should_set_cookie"
+    ],
+    "ground_truth": {
+      "id": 10,
+      "question": "How are sessions saved?",
+      "query_type": "flow",
+      "expected_files": [
+        "flask_repo\\src\\flask\\app.py",
+        "flask_repo\\src\\flask\\sessions.py",
+        "flask_repo\\src\\flask\\testing.py"
+      ],
+      "expected_functions": [
+        "get_cookie_httponly",
+        "get_signing_serializer",
+        "is_null_session",
+        "process_response",
+        "save_session",
+        "session_transaction",
+        "test_request_context"
+      ],
+      "reference_answer": "The execution flow for saving sessions begins with the `process_response` function in `flask_repo\\src\\flask\\app.py`, which calls `is_null_session` to check if the session is null. If it's not null, `save_session` is called from `flask_repo\\src\\flask\\sessions.py` to save the session. The `save_session` function then calls other functions like `get_signing_serializer` and `get_cookie_httponly` to configure the session cookie. The flow also involves the `session_transaction` function from `flask_repo\\src\\flask\\testing.py`, which is used to modify the session in a test context.",
+      "notes": ""
+    }
+  }
+]

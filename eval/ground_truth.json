@@ -1,0 +1,182 @@
+[
+  {
+    "id": 1,
+    "question": "How are blueprints registered?",
+    "query_type": "flow",
+    "expected_files": [
+      "flask_repo\\src\\flask\\sansio\\app.py",
+      "flask_repo\\src\\flask\\sansio\\blueprints.py",
+      "flask_repo\\src\\flask\\sansio\\scaffold.py"
+    ],
+    "expected_functions": [
+      "BlueprintSetupState",
+      "_endpoint_from_view_func",
+      "_merge_blueprint_funcs",
+      "make_setup_state",
+      "register",
+      "register_blueprint"
+    ],
+    "reference_answer": "The execution flow for registering blueprints begins with the `register_blueprint` function, which is called on a `Blueprint` object. This function calls the `register` function, passing in the application and options. The `register` function then creates a `BlueprintSetupState` object using the `make_setup_state` function and calls the `_merge_blueprint_funcs` function to merge the blueprint functions. The `BlueprintSetupState` object is used to register the blueprint with the application, and the `_merge_blueprint_funcs` function is used to merge the blueprint functions with the application functions. The `make_setup_state` function is also called by the `Blueprint` class to create a `BlueprintSetupState` object. The `BlueprintSetupState` object is then used to register the blueprint with the application.",
+    "notes": ""
+  },
+  {
+    "id": 2,
+    "question": "How does request dispatching work?",
+    "query_type": "flow",
+    "expected_files": [
+      "flask_repo\\src\\flask\\app.py",
+      "flask_repo\\src\\flask\\views.py"
+    ],
+    "expected_functions": [
+      "Flask",
+      "dispatch_request",
+      "ensure_sync",
+      "finalize_request",
+      "full_dispatch_request",
+      "make_response",
+      "raise_routing_exception",
+      "wsgi_app"
+    ],
+    "reference_answer": "The request dispatching flow begins with the `full_dispatch_request` function in `flask_repo\\src\\flask\\app.py`, which calls `dispatch_request` to match the URL and return the view or error handler. `dispatch_request` then calls `raise_routing_exception` if a routing exception occurs, or `ensure_sync` to ensure the view function is synchronous. The result is then passed to `finalize_request` to convert it into a response and invoke postprocessing functions. This flow is initiated by `Flask` or `wsgi_app` in `flask_repo\\src\\flask\\app.py`, which call `full_dispatch_request` to start the dispatching process.",
+    "notes": ""
+  },
+  {
+    "id": 3,
+    "question": "How are routes registered?",
+    "query_type": "flow",
+    "expected_files": [
+      "flask_repo\\src\\flask\\sansio\\app.py",
+      "flask_repo\\src\\flask\\sansio\\scaffold.py"
+    ],
+    "expected_functions": [
+      "Scaffold",
+      "_method_route",
+      "add_url_rule",
+      "register_blueprint",
+      "route"
+    ],
+    "reference_answer": "The execution flow for registering routes begins with the `route` function in `flask_repo\\src\\flask\\sansio\\scaffold.py`, which calls `add_url_rule` in the same file to register a rule for routing incoming requests and building URLs. The `add_url_rule` function is also called by the `register_blueprint` function in `flask_repo\\src\\flask\\sansio\\app.py` to register a blueprint on the application. The `Scaffold` class in `flask_repo\\src\\flask\\sansio\\scaffold.py` is a common behavior shared between `Flask` and `Blueprint`, and it uses the `route` decorator to register routes. The `_method_route` function in `flask_repo\\src\\flask\\sansio\\scaffold.py` is used to register a route for a specific method.",
+    "notes": ""
+  },
+  {
+    "id": 4,
+    "question": "How are before_request handlers executed?",
+    "query_type": "flow",
+    "expected_files": [
+      "flask_repo\\src\\flask\\app.py",
+      "flask_repo\\src\\flask\\sansio\\blueprints.py",
+      "flask_repo\\src\\flask\\sansio\\scaffold.py"
+    ],
+    "expected_functions": [
+      "full_dispatch_request",
+      "preprocess_request",
+      "before_request",
+      "before_app_request"
+    ],
+    "reference_answer": "The execution flow of before_request handlers begins with the Flask object, which calls the full_dispatch_request function. This function then calls the preprocess_request function, which is responsible for executing the before_request handlers. The preprocess_request function iterates over the registered before_request functions and calls them. If any of these functions return a non-None value, the execution is stopped. The before_request functions are registered using the before_request or before_app_request functions, which are available on both app and blueprint objects.",
+    "notes": ""
+  },
+  {
+    "id": 5,
+    "question": "How does teardown_appcontext work?",
+    "query_type": "flow",
+    "expected_files": [
+      "flask_repo\\src\\flask\\app.py",
+      "flask_repo\\src\\flask\\ctx.py",
+      "flask_repo\\src\\flask\\sansio\\app.py"
+    ],
+    "expected_functions": [
+      "AppContext",
+      "do_teardown_appcontext",
+      "ensure_sync",
+      "teardown_appcontext"
+    ],
+    "reference_answer": "The execution flow begins with the `AppContext` class, which is used to manage the application context. When the context is popped, the `pop` method is called, which in turn calls `do_teardown_appcontext` to perform the necessary teardown operations. The `do_teardown_appcontext` function calls all functions decorated with `teardown_appcontext` and sends the `appcontext_tearing_down` signal. The `teardown_appcontext` function registers a function to be called when the app context is popped. The `ensure_sync` function is used to ensure that the functions are synchronous for WSGI workers.",
+    "notes": ""
+  },
+  {
+    "id": 6,
+    "question": "Where is save_session implemented?",
+    "query_type": "lookup",
+    "expected_files": [
+      "flask_repo\\src\\flask\\sessions.py"
+    ],
+    "expected_functions": ["save_session"],
+    "reference_answer": "The execution flow begins with the SessionInterface class, which defines the basic interface for session management. The save_session method is a crucial part of this interface, and it is implemented in the same file, flask_repo\\src\\flask\\sessions.py. This method is called at the end of each request, after generating a response, and it is responsible for saving the session data. The save_session method calls several other methods, including get_cookie_domain, get_cookie_path, get_cookie_secure, get_cookie_partitioned, get_cookie_samesite, and get_cookie_httponly, to determine the cookie settings. If the session is modified to be empty, it removes the cookie; otherwise, it sets the cookie with the determined settings.",
+    "notes": ""
+  },
+  {
+    "id": 7,
+    "question": "What breaks if register_blueprint changes?",
+    "query_type": "impact",
+    "expected_files": [],
+    "expected_functions": [],
+    "reference_answer": "",
+    "notes": "",
+    "skip_deterministic_eval": true
+  },
+  {
+    "id": 8,
+    "question": "How are error handlers resolved?",
+    "query_type": "flow",
+    "expected_files": [
+      "flask_repo\\src\\flask\\app.py",
+      "flask_repo\\src\\flask\\sansio\\app.py",
+      "flask_repo\\src\\flask\\sansio\\scaffold.py"
+    ],
+    "expected_functions": [
+      "_find_error_handler",
+      "_get_exc_class_and_code",
+      "error_handler_spec",
+      "errorhandler",
+      "finalize_request",
+      "handle_exception",
+      "handle_http_exception",
+      "make_response",
+      "process_response",
+      "register_error_handler"
+    ],
+    "reference_answer": "The error handling flow in the given codebase starts with the `handle_exception` function in `flask_repo\\src\\flask\\app.py`, which calls `finalize_request` to handle exceptions. The `finalize_request` function then calls `process_response` and `make_response` to process the response. For HTTP exceptions, `handle_http_exception` is called, which invokes `_find_error_handler` in `flask_repo\\src\\flask\\sansio\\app.py` to find a registered error handler. The `_find_error_handler` function uses `_get_exc_class_and_code` in `flask_repo\\src\\flask\\sansio\\scaffold.py` to get the exception class and code. If a handler is found, it is called to handle the error. The `errorhandler` function in `flask_repo\\src\\flask\\sansio\\scaffold.py` is used to register error handlers, which are stored and retrieved by the `_find_error_handler` function.",
+    "notes": ""
+  },
+  {
+    "id": 9,
+    "question": "How does URL matching work?",
+    "query_type": "flow",
+    "expected_files": [
+      "flask_repo\\src\\flask\\app.py",
+      "flask_repo\\src\\flask\\ctx.py",
+      "werkzeug_repo\\src\\werkzeug\\routing\\map.py"
+    ],
+    "expected_functions": [
+      "bind_to_environ",
+      "create_url_adapter",
+      "make_redirect_url",
+      "match",
+      "match_request"
+    ],
+    "reference_answer": "The URL matching process begins with the `create_url_adapter` function in `flask_repo\\src\\flask\\app.py`, which creates a URL adapter for the given request. This function calls `bind_to_environ` in `werkzeug_repo\\src\\werkzeug\\routing\\map.py` to bind the URL adapter to the WSGI environment. The `match_request` function in `flask_repo\\src\\flask\\ctx.py` then uses the URL adapter to match the current request, calling the `match` function in `werkzeug_repo\\src\\werkzeug\\routing\\map.py`. The `match` function attempts to find a matching URL rule and returns the result, which may include a redirect or an exception. The `match_request` function handles the result, storing either the matched endpoint and args or a routing exception.",
+    "notes": ""
+  },
+  {
+    "id": 10,
+    "question": "How are sessions saved?",
+    "query_type": "flow",
+    "expected_files": [
+      "flask_repo\\src\\flask\\app.py",
+      "flask_repo\\src\\flask\\sessions.py",
+      "flask_repo\\src\\flask\\testing.py"
+    ],
+    "expected_functions": [
+      "get_cookie_httponly",
+      "get_signing_serializer",
+      "is_null_session",
+      "process_response",
+      "save_session",
+      "session_transaction",
+      "test_request_context"
+    ],
+    "reference_answer": "The execution flow for saving sessions begins with the `process_response` function in `flask_repo\\src\\flask\\app.py`, which calls `is_null_session` to check if the session is null. If it's not null, `save_session` is called from `flask_repo\\src\\flask\\sessions.py` to save the session. The `save_session` function then calls other functions like `get_signing_serializer` and `get_cookie_httponly` to configure the session cookie. The flow also involves the `session_transaction` function from `flask_repo\\src\\flask\\testing.py`, which is used to modify the session in a test context.",
+    "notes": ""
+  }
+]

@@ -8,6 +8,8 @@ Features:
 - Allowed-list hallucination guard injected into every prompt
 """
 
+from groq import Groq, RateLimitError, InternalServerError
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -369,15 +371,24 @@ Answer format:
 {answer_format}
 """
 
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.1,
-        max_tokens=1024
-    )
+    try:
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.1,
+            max_tokens=1024
+        )
 
-    return response.choices[0].message.content
+        return response.choices[0].message.content
 
+    except RateLimitError:
+        return "ERROR: Groq rate limit reached. Try again later."
+
+    except InternalServerError:
+        return "ERROR: Groq service is temporarily unavailable."
+
+    except Exception as e:
+        return f"ERROR: {e}"
 
 # =====================================
 # MAIN QUERY
